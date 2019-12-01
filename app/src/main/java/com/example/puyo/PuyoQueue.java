@@ -1,3 +1,4 @@
+package com.example.puyo;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -27,7 +28,7 @@ public class PuyoQueue<Item> implements Iterable<Item> {
     /**
      * Returns the item least recently added to this queue.
      * @return the item least recently added to this queue
-     * @throws java.util.NoSuchElementException if this queue is empty
+     * @throws NoSuchElementException if this queue is empty
      */
     public Item peek() {
         if (isEmpty()) throw new NoSuchElementException("Queue underflow");
@@ -50,7 +51,7 @@ public class PuyoQueue<Item> implements Iterable<Item> {
     /**
      * Removes and returns the item on this queue that was least recently added.
      * @return the item on this queue that was least recently added
-     * @throws java.util.NoSuchElementException if this queue is empty
+     * @throws NoSuchElementException if this queue is empty
      */
     public Item dequeue() {
         if (isEmpty()) throw new NoSuchElementException("Queue underflow");
@@ -102,7 +103,7 @@ public class PuyoQueue<Item> implements Iterable<Item> {
     /**
      * Unit tests the <tt>Queue</tt> data type.
      */
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         // deleted on purpose
-    }
+    }*/
 }

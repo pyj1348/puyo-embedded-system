@@ -1,4 +1,4 @@
-
+package com.example.puyo;
 /**
  * Homework Assignment #: "8-Puzzle"
  *
@@ -11,9 +11,10 @@
  * @ Name       :juseokcheon
  **/
 
+import android.graphics.Point;
+
 import java.util.ArrayList;
 
-import java.awt.Point;
 
 public class Board {
     private int[][] mTiles;
@@ -27,6 +28,9 @@ public class Board {
     static int[] dy = { 0, -1, 0, 1 };
     static boolean[][] visited;
     static ArrayList<Point> poplist;
+
+
+
 
     // create a board from an n-by-n array of tiles
     // (where tiles[row][col] = tile at (row, col)
@@ -51,7 +55,7 @@ public class Board {
         puyolist.enqueue(new Puyo());
 
         if (tiles == null)
-            throw new java.lang.NullPointerException();
+            throw new NullPointerException();
 
         mTiles = new int[x][y];
         for (int i = 0; i < x; i++)
@@ -63,7 +67,7 @@ public class Board {
         puyolist = new PuyoQueue<Puyo>(retrived);
         initial_puyo = new Point(3, 1);
         if (tiles == null)
-            throw new java.lang.NullPointerException();
+            throw new NullPointerException();
         mTiles = new int[x][y];
         for (int i = 0; i < x; i++)
             System.arraycopy(tiles[i], 0, mTiles[i], 0, tiles[i].length);
@@ -233,7 +237,8 @@ public class Board {
         if (mTiles[3][1] != 0)
             return 0;
         handling_puyo = puyolist.dequeue();
-        position_puyo = (Point) initial_puyo.clone();
+        position_puyo = new Point(initial_puyo.x,initial_puyo.y);
+
         puyolist.enqueue(new Puyo());
         return 1;
     }
@@ -304,6 +309,14 @@ public class Board {
         }
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+/*
     // unit tests (DO NOT MODIFY)
     public static void main(String[] args) {
         Board a = new Board();
@@ -390,5 +403,5 @@ public class Board {
         }
 
     }
-
+*/
 }

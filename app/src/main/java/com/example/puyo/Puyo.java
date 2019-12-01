@@ -1,3 +1,5 @@
+package com.example.puyo;
+
 public class Puyo {
     private int first;
     private int second;
