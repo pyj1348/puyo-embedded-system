@@ -126,8 +126,10 @@ public class MainActivity extends AppCompatActivity {
             //score/point part clear_board n times to clear whole board
             int point = board.clear_board();
             int multiplier = 1;
-            while (point != 0) {
-                point = multiplier*board.clear_board();
+            int stepscore = point;
+            while (point != 0) {                                       
+                point = multiplier*board.clear_board();                 
+                stepscore = stepscore+point;
                 for (int k = 0; k < board.getY(); k++) {
                     for (int i = 0; i < board.getX(); i++) {
                         System.out.print(board.getboard()[i][k]);
