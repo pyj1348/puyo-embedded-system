@@ -15,7 +15,6 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
-
 public class Board {
     private int[][] mTiles;
     private int x = 8;
@@ -133,19 +132,19 @@ public class Board {
         } else {
             int res = this.extra_spin_check(radius);
             if (res != 0) {
-                if (radius != 3) {
+                if (radius == 3) {
                     if (res == 1)
                         position_puyo.x++;
                     if (res == 2)
                         position_puyo.y--;
-                } else if (radius != 4) {
+                } else if (radius == 4) {
                     position_puyo.y++;
-                } else if (radius != 5) {
+                } else if (radius == 5) {
                     if (res == 1)
                         position_puyo.x--;
                     if (res == 2)
                         position_puyo.y++;
-                } else if (radius != 6)
+                } else if (radius == 6)
                     position_puyo.y--;
                 handling_puyo.spin();
             }
@@ -155,33 +154,33 @@ public class Board {
     public boolean check(int radius) {
         for (int i = -1; i < 2; i++) {
             for (int k = -1; k < 2; k++) {
-                if (radius == 4) {
-                    if (position_puyo.x - 1 >= 0) {
-                        if (position_puyo.x + i <= 1 || mTiles[position_puyo.x - 1][position_puyo.y + 0] != 0
-                                || mTiles[position_puyo.x - 1][position_puyo.y + 1] != 0)
+                if (radius == 6) {
+                    if (position_puyo.y >=0) {
+                        if (mTiles[position_puyo.x][position_puyo.y - 1] != 0
+                                || mTiles[position_puyo.x + 1][position_puyo.y - 1] != 0)
                             return false;
                     } else
                         return false;
                 } else if (radius == 3) {
-                    if (position_puyo.y - 1 >= 0) {
+                    if (position_puyo.x - 1 >= 1) {
 
                         if (position_puyo.y + i < 0 || mTiles[position_puyo.x - 1][position_puyo.y - 1] != 0
                                 || mTiles[position_puyo.x - 0][position_puyo.y - 1] != 0)
                             return false;
                     } else
                         return false;
-                } else if (radius == 6) {
-                    if (position_puyo.x + 1 <= 6) {
+                } else if (radius == 4) {
+                    if (position_puyo.y + 1 <= 12) {
 
-                        if (position_puyo.x + i >= 6 || mTiles[position_puyo.x + 1][position_puyo.y - 1] != 0
+                        if (mTiles[position_puyo.x + 1][position_puyo.y - 1] != 0
                                 || mTiles[position_puyo.x + 1][position_puyo.y + 0] != 0)
                             return false;
                     } else
                         return false;
                 } else if (radius == 5) {
-                    if (position_puyo.y + 1 <= 12) {
-                        if (position_puyo.y + i >= 12 || mTiles[position_puyo.x + 1][position_puyo.y + 1] != 0
-                                || mTiles[position_puyo.x + 0][position_puyo.y + 1] != 0)
+                    if (position_puyo.x + 1 <= 6) {
+                        if ( mTiles[position_puyo.x + 1][position_puyo.y + 1] != 0
+                                || mTiles[position_puyo.x + 1][position_puyo.y + 0] != 0)
                             return false;
                     } else
                         return false;
@@ -207,7 +206,7 @@ public class Board {
     public int extra_spin_check(int radius) {
         if (radius == 3) {
             if (position_puyo.x <= 6) {
-                if (mTiles[position_puyo.x + 1][position_puyo.y + 0] != 0)
+                if (mTiles[position_puyo.x + 1][position_puyo.y + 0] == 0)
                     return 1;
             }
             return 2;
