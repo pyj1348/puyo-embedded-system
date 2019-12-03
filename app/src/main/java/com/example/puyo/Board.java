@@ -1,4 +1,5 @@
 package com.example.puyo;
+
 /**
  * Homework Assignment #: "8-Puzzle"
  *
@@ -27,9 +28,6 @@ public class Board {
     static int[] dy = { 0, -1, 0, 1 };
     static boolean[][] visited;
     static ArrayList<Point> poplist;
-
-
-
 
     // create a board from an n-by-n array of tiles
     // (where tiles[row][col] = tile at (row, col)
@@ -131,23 +129,32 @@ public class Board {
             handling_puyo.spin();
         } else {
             int res = this.extra_spin_check(radius);
-            if (res != 0) {
-                if (radius == 3) {
-                    if (res == 1)
-                        position_puyo.x++;
-                    if (res == 2)
-                        position_puyo.y--;
-                } else if (radius == 4) {
-                    position_puyo.y++;
-                } else if (radius == 5) {
-                    if (res == 1)
-                        position_puyo.x--;
-                    if (res == 2)
-                        position_puyo.y++;
-                } else if (radius == 6)
+            if (radius == 3) {
+                if (res == 1)
+                    position_puyo.x++;
+                else if (res == 2) {
                     position_puyo.y--;
+                }
                 handling_puyo.spin();
+
+            } else if (radius == 4) {
+                position_puyo.y++;
+                handling_puyo.spin(6);
+
+            } else if (radius == 5) {
+                if (res == 1)
+                    position_puyo.x--;
+                else if (res == 2) {
+                    position_puyo.y++;
+                }
+                handling_puyo.spin();
+
+            } else if (radius == 6) {
+                position_puyo.y--;
+                handling_puyo.spin(4);
+
             }
+
         }
     }
 
@@ -155,7 +162,7 @@ public class Board {
         for (int i = -1; i < 2; i++) {
             for (int k = -1; k < 2; k++) {
                 if (radius == 6) {
-                    if (position_puyo.y >=0) {
+                    if (position_puyo.y >= 0) {
                         if (mTiles[position_puyo.x][position_puyo.y - 1] != 0
                                 || mTiles[position_puyo.x + 1][position_puyo.y - 1] != 0)
                             return false;
@@ -179,7 +186,7 @@ public class Board {
                         return false;
                 } else if (radius == 5) {
                     if (position_puyo.x + 1 <= 6) {
-                        if ( mTiles[position_puyo.x + 1][position_puyo.y + 1] != 0
+                        if (mTiles[position_puyo.x + 1][position_puyo.y + 1] != 0
                                 || mTiles[position_puyo.x + 1][position_puyo.y + 0] != 0)
                             return false;
                     } else
@@ -206,37 +213,27 @@ public class Board {
     public int extra_spin_check(int radius) {
         if (radius == 3) {
             if (position_puyo.x <= 6) {
-                if (mTiles[position_puyo.x + 1][position_puyo.y + 0] == 0)
-                    return 1;
-            }
-            return 2;
-        } else if (radius == 6) {
-            if (position_puyo.y <= 10) {
-                if (mTiles[position_puyo.x][position_puyo.y + 1] != 0)
-                    return 0;
-            } else
-                return 0;
-        } else if (radius == 5) {
-            if (position_puyo.x >= 1) {
                 if (mTiles[position_puyo.x - 1][position_puyo.y + 0] == 0)
                     return 1;
+                if (mTiles[position_puyo.x -1][position_puyo.y + 0 ] != 0&&mTiles[position_puyo.x - 1][position_puyo.y - 1] == 0)
+                    return 2;
             }
-            return 2;
-        } else if (radius == 4) {
-            if (position_puyo.y >= 1) {
-                if (mTiles[position_puyo.x][position_puyo.y - 1] != 0)
-                    return 0;
-            } else
-                return 0;
+        } else if (radius == 5) {
+            if (position_puyo.x >= 1) {
+                if (mTiles[position_puyo.x + 1][position_puyo.y + 0] == 0)
+                    return 1;
+                if (mTiles[position_puyo.x + 1][position_puyo.y + 1 ] == 0&&mTiles[position_puyo.x + 1][position_puyo.y ] != 0)
+                    return 2;
+            }
         }
-        return 1;
+        return 0;
     }
 
     public int gen_puyo() {
         if (mTiles[3][1] != 0)
             return 0;
         handling_puyo = puyolist.dequeue();
-        position_puyo = new Point(initial_puyo.x,initial_puyo.y);
+        position_puyo = new Point(initial_puyo.x, initial_puyo.y);
 
         puyolist.enqueue(new Puyo());
         return 1;
@@ -315,92 +312,42 @@ public class Board {
     public int getY() {
         return y;
     }
-/*
-    // unit tests (DO NOT MODIFY)
-    public static void main(String[] args) {
-        Board a = new Board();
-
-        for (int q = 0; q < 100; q++) {
-            //at first generate puyo
-            if (a.gen_puyo() == 0)
-                return;
-            for (int k = 0; k < a.y; k++) {
-                for (int i = 0; i < a.x; i++) {
-                    System.out.print(a.getboard()[i][k]);
-                }
-                System.out.println();
-            }
-            System.out.println();
-            a.move_left();
-            a.move_left();
-            a.move_left();
-            a.move_left();
-            a.move_left();
-            a.move_left();
-
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_down();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-            a.move_right();
-
-            //after move please endwith end_step
-            a.end_step();
-
-            for (int k = 0; k < a.y; k++) {
-                for (int i = 0; i < a.x; i++) {
-                    System.out.print(a.getboard()[i][k]);
-                }
-                System.out.println();
-            }
-            System.out.println();
-
-            //drop every puyo inthe air
-            a.update_map();
-
-            //score/point part clear_board n times to clear whole board
-            int point = a.clear_board();
-            int multiplier = 1;
-            while (point != 0) {
-                point = multiplier*a.clear_board();
-                for (int k = 0; k < a.y; k++) {
-                    for (int i = 0; i < a.x; i++) {
-                        System.out.print(a.getboard()[i][k]);
-                    }
-                    System.out.println();
-                }
-                System.out.println();
-                multiplier = multiplier*4;
-                a.update_map();
-            }
-            for (int k = 0; k < a.y; k++) {
-                for (int i = 0; i < a.x; i++) {
-                    System.out.print(a.getboard()[i][k]);
-                }
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println("a.getboard()[i][k]");
-
-        }
-
-    }
-*/
+    /*
+     * // unit tests (DO NOT MODIFY) public static void main(String[] args) { Board
+     * a = new Board();
+     * 
+     * for (int q = 0; q < 100; q++) { //at first generate puyo if (a.gen_puyo() ==
+     * 0) return; for (int k = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
+     * System.out.print(a.getboard()[i][k]); } System.out.println(); }
+     * System.out.println(); a.move_left(); a.move_left(); a.move_left();
+     * a.move_left(); a.move_left(); a.move_left();
+     * 
+     * a.move_down(); a.move_down(); a.move_down(); a.move_down();
+     * 
+     * a.move_down(); a.move_down(); a.move_down(); a.move_down(); a.move_down();
+     * a.move_down(); a.move_down(); a.move_down(); a.move_down(); a.move_right();
+     * a.move_right(); a.move_right(); a.move_right(); a.move_right();
+     * a.move_right(); a.move_right(); a.move_right();
+     * 
+     * //after move please endwith end_step a.end_step();
+     * 
+     * for (int k = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
+     * System.out.print(a.getboard()[i][k]); } System.out.println(); }
+     * System.out.println();
+     * 
+     * //drop every puyo inthe air a.update_map();
+     * 
+     * //score/point part clear_board n times to clear whole board int point =
+     * a.clear_board(); int multiplier = 1; while (point != 0) { point =
+     * multiplier*a.clear_board(); for (int k = 0; k < a.y; k++) { for (int i = 0; i
+     * < a.x; i++) { System.out.print(a.getboard()[i][k]); } System.out.println(); }
+     * System.out.println(); multiplier = multiplier*4; a.update_map(); } for (int k
+     * = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
+     * System.out.print(a.getboard()[i][k]); } System.out.println(); }
+     * System.out.println(); System.out.println("a.getboard()[i][k]");
+     * 
+     * }
+     * 
+     * }
+     */
 }
