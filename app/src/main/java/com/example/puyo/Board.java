@@ -13,10 +13,20 @@ package com.example.puyo;
  **/
 
 import android.graphics.Point;
+import java.util.HashMap;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 
 public class Board {
+    static final int hasharr[] = { 000, 001, 002, 003, 004, 010, 011, 012, 013, 014, 020, 021, 022, 023, 024, 030, 031,
+            032, 033, 034, 040, 041, 042, 043, 044, 100, 101, 102, 103, 104, 110, 111, 112, 113, 114, 120, 121, 122,
+            123, 124, 130, 131, 132, 133, 134, 140, 141, 142, 143, 144, 200, 201, 202, 203, 204, 210, 211, 212, 213,
+            214, 220, 221, 222, 223, 224, 230, 231, 232, 233, 234, 240, 241, 242, 243, 244, 300, 301, 302, 303, 304,
+            310, 311, 312, 313, 314, 320, 321, 322, 323, 324, 330, 331, 332, 333, 334, 340, 341, 342, 343, 344, 400,
+            401, 402, 403, 404, 410, 411, 412, 413, 414, 420, 421, 422, 423, 424, 430, 431, 432, 433, 434, 440, 441,
+            442, 443, 444 };
+
     private int[][] mTiles;
     private int x = 8;
     private int y = 14;
@@ -28,13 +38,17 @@ public class Board {
     static int[] dy = { 0, -1, 0, 1 };
     static boolean[][] visited;
     static ArrayList<Point> poplist;
+    HashMap<Integer, Integer> arrMap;
 
     // create a board from an n-by-n array of tiles
-    // (where tiles[row][col] = tile at (row, col)
+    // {where tiles[row][col] = tile at (row, col)
+
     public Board() {
+        arrMap = new HashMap<>();
+        for (int i = 0; i < 125; i++)
+            arrMap.put(i, hasharr[i]);
         puyolist = new PuyoQueue<Puyo>();
         initial_puyo = new Point(3, 1);
-        puyolist.enqueue(new Puyo());
         puyolist.enqueue(new Puyo());
         puyolist.enqueue(new Puyo());
 
@@ -47,7 +61,6 @@ public class Board {
     public Board(int[][] tiles) {
         puyolist = new PuyoQueue<Puyo>();
         initial_puyo = new Point(3, 1);
-        puyolist.enqueue(new Puyo());
         puyolist.enqueue(new Puyo());
         puyolist.enqueue(new Puyo());
 
@@ -215,14 +228,16 @@ public class Board {
             if (position_puyo.x <= 6) {
                 if (mTiles[position_puyo.x - 1][position_puyo.y + 0] == 0)
                     return 1;
-                if (mTiles[position_puyo.x -1][position_puyo.y + 0 ] != 0&&mTiles[position_puyo.x - 1][position_puyo.y - 1] == 0)
+                if (mTiles[position_puyo.x - 1][position_puyo.y + 0] != 0
+                        && mTiles[position_puyo.x - 1][position_puyo.y - 1] == 0)
                     return 2;
             }
         } else if (radius == 5) {
             if (position_puyo.x >= 1) {
                 if (mTiles[position_puyo.x + 1][position_puyo.y + 0] == 0)
                     return 1;
-                if (mTiles[position_puyo.x + 1][position_puyo.y + 1 ] == 0&&mTiles[position_puyo.x + 1][position_puyo.y ] != 0)
+                if (mTiles[position_puyo.x + 1][position_puyo.y + 1] == 0
+                        && mTiles[position_puyo.x + 1][position_puyo.y] != 0)
                     return 2;
             }
         }
@@ -312,6 +327,73 @@ public class Board {
     public int getY() {
         return y;
     }
+
+    public byte[] tostring() {
+        BitSet bitset = new BitSet(200);
+        int[][] tempboard = this.getboard();
+        int stamp = 0;
+        for (int i = 0; i < 13; i++)
+            for (int k = 0; k < 2; k++) {
+                int temp = tempboard[1 + k * 3][i] * 100 + tempboard[2 + k * 3][i] * 10 + tempboard[3 + k * 3][i];
+                int temp_res = getKey(arrMap, temp);
+                if (temp_res != -1) {
+                    String res = Integer.toBinaryString(temp_res);
+                    StringBuilder res_temp = new StringBuilder("");
+
+                    for (int q = 0; q < 7 - res.length(); q++)
+                        res_temp.append("0");
+                    res_temp.append(res);
+                    res = res_temp.toString();
+                    for (int a = 0; a < 7; a++) {
+                        if (a < res.length())
+                            if (res.charAt(a) == '1')
+                                bitset.set(a + stamp * 7);
+                    }
+                    stamp++;
+                }
+            }
+        System.out.println("length" + bitset);
+        byte[] bytes = bitset.toByteArray();
+        return bytes;
+    }
+
+    public void board_update(byte[] string) {
+        BitSet bitset = BitSet.valueOf(string);
+        System.out.println("length" + bitset);
+
+        mTiles = new int[x][y];
+        int stamp = 0;
+        for (int i = 0; i < y; i++) {
+            for (int k = 0; k < 2; k++) {
+                BitSet temp = bitset.get(stamp * 7, stamp * 7 + 7);
+                StringBuilder res = new StringBuilder("0000000");
+                System.out.print(temp + "" + stamp * 7 + "" + (stamp * 7 + 7));
+                for (String token : temp.toString().replace("{", "").replace("}", "").replace(" ", "").split(",")) {
+                    if (!token.equals("")) {
+                        res.setCharAt(Integer.parseInt(token), '1');
+                    }
+                }
+
+                int tempres = Integer.parseInt(res.toString(), 2);
+                int hashres = arrMap.get(tempres);
+                mTiles[k * 3 + 1][i] = hashres / 100;
+                mTiles[k * 3 + 1 + 1][i] = hashres % 100 / 10;
+                mTiles[k * 3 + 1 + 2][i] = hashres % 10;
+                stamp++;
+
+            }
+        }
+    }
+
+    public static Integer getKey(HashMap<Integer, Integer> m, Integer value) {
+        for (Integer o : m.keySet()) {
+            if (m.get(o).equals(value)) {
+                return o;
+            }
+        }
+        return -1;
+    }
+
     /*
      * // unit tests (DO NOT MODIFY) public static void main(String[] args) { Board
      * a = new Board();
