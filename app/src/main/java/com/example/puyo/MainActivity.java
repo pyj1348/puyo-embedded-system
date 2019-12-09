@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-
         for(int i=0; i < ROW; i++){
                 for(int j = 0; j < COL; j++){
                     m_board_Image[i][j] = (ImageView) findViewById(idArray[i][j]);
