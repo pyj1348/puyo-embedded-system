@@ -11,9 +11,36 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-
 public class MainActivity extends AppCompatActivity {
+    // Used to load the native library on application startup.
+    static {
+        // displays game mode, player's name
+        System.loadLibrary("text_LCD_test");
+
+        // displays player's game score
+        System.loadLibrary("7_segment_test");
+
+        // displays other game status, effects
+        System.loadLibrary("8_LED_test");
+        System.loadLibrary("dot_matrix_test");
+
+        // Left/Right/Up/Down Control Input
+        System.loadLibrary("9_button_test");
+    }
+
+    public native int LCD_write(String game_mode, String address);
+    public native int segment_write(int score);
+    public native int LED_write(int combo); // explosion combo
+    public native int matrix_write(int signal); // explosion and termination
+
+    public native int button_open();
+    public native int button_read();
+    public native int botton_close();
+
+    /////////////////////
+
     private Button up, down, left, right;
+
     private Board board;
     private ImageView[][] board_Image;
 
@@ -32,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
             {R.id.iv88, R.id.iv89, R.id.iv90, R.id.iv91, R.id.iv92, R.id.iv93, R.id.iv94, R.id.iv95},
             {R.id.iv96, R.id.iv97, R.id.iv98, R.id.iv99, R.id.iv100, R.id.iv101, R.id.iv102, R.id.iv103},
             {R.id.iv104, R.id.iv105, R.id.iv106, R.id.iv107, R.id.iv108, R.id.iv109, R.id.iv110, R.id.iv111}
-
     };
-
 
     static final int ROW = 14;
     static final int COL = 8;
+
+    ///////////////////////////////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +78,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         board = new Board();
         board.gen_puyo();
         drawBoard();
+
+        ///// for emulator test /////
 
         up = (Button) findViewById(R.id.button_up);
         up.setOnClickListener(new Button.OnClickListener() {
@@ -95,6 +123,31 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
+        ///// for device test /////
+        int direction, iter = 15;
+
+        button_open();
+        while(iter > 0){
+            direction = button_read();
+            if(direction == 1){ iter--;
+                board.spin(); //printf("LEFT ROTATE\n");
+                drawBoard();
+            } else if(direction == 2) { iter--;
+                board.move_left(); //printf("LEFT MOVE\n");
+                drawBoard();
+            } else if(direction == 4) { iter--;
+                board.move_right(); //printf("RIGHT MOVE\n");
+                drawBoard();
+            } else if(direction == 8) { iter--;
+                board.spin(); //printf("RIGHT ROTATE\n");
+                drawBoard();
+            }
+        }
+
+        botton_close();
+
+        //////////////
 
         for (int q = 0; q < 100; q++) {
             //at first generate puyo
