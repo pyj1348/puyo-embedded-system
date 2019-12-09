@@ -13,13 +13,17 @@ package com.example.puyo;
  **/
 
 import android.graphics.Point;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Base64;
+import android.util.Base64;
 import java.util.BitSet;
 
 public class Board {
@@ -332,6 +336,7 @@ public class Board {
         return y;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public String tostring() {
         BitSet bitset = new BitSet(200);
         int[][] tempboard = this.getboard();
@@ -377,13 +382,14 @@ public class Board {
                     bitset.set(a + stamp * 7);
         }
         byte[] bytes = bitset.toByteArray();
-        String result = Base64.getEncoder().encodeToString(bytes);
+        String result = Base64.encodeToString(bytes,0);
         return this.compress(result);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void board_update(String string) {
         String decompressed = this.decompress(string);
-        byte[] bytes = Base64.getDecoder().decode(decompressed);
+        byte[] bytes = Base64.decode(decompressed,0);
         BitSet bitset = BitSet.valueOf(bytes);
 
         mTiles = new int[x][y];
