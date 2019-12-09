@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-
 public class MainActivity extends AppCompatActivity {
     static final int ROW = 14;
     static final int COL = 8;
@@ -94,6 +93,34 @@ public class MainActivity extends AppCompatActivity {
             {R.id.iv104_4, R.id.iv105_4, R.id.iv106_4, R.id.iv107_4, R.id.iv108_4, R.id.iv109_4, R.id.iv110_4, R.id.iv111_4}
     };
 
+    ///// JNI
+
+    // Used to load the native library on application startup.
+    static {
+        // displays game mode, player's name
+        System.loadLibrary("text_LCD_test");
+
+        // displays player's game score
+        System.loadLibrary("7_segment_test");
+
+        // displays other game status, effects
+        System.loadLibrary("8_LED_test");
+        System.loadLibrary("dot_matrix_test");
+
+        // Left/Right/Up/Down Control Input
+        System.loadLibrary("9_button_test");
+    }
+
+    public native int LCD_write(String game_mode, String address);
+    public native int segment_write(int score);
+    public native int LED_write(int combo); // explosion combo
+    public native int matrix_write(int signal); // explosion and termination
+
+    public native int button_open();
+    public native int button_read();
+    public native int botton_close();
+
+    ///// JNI
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         board = new Board();
         subBoards = new Board[]{new Board(), new Board(), new Board()};
-
 
 
         board.gen_puyo();
@@ -188,7 +214,49 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        ///// JNI
+
+        LCD_write("3 players ", "165.194.1.1");
+        segment_write(1010);
+        LED_write(210);
+        matrix_write(0);
+
+        ExampleThread thread = new ExampleThread();
+        thread.start();
+
+        // botton_close();
+
+        ///// JNI
     }
+
+    private class ExampleThread extends Thread {
+        private static final String TAG = "ExampleThread";
+
+        public ExampleThread() { // initialization
+            button_open();
+        }
+
+        public void run() {
+            int direction;
+            while (true){
+                direction = button_read();
+                if(direction == 1){
+                    board.spin(); //printf("LEFT ROTATE\n");
+                    drawMyBoard();
+                } else if(direction == 2) {
+                    board.move_left(); //printf("LEFT MOVE\n");
+                    drawMyBoard();
+                } else if(direction == 4) {
+                    board.move_right(); //printf("RIGHT MOVE\n");
+                    drawMyBoard();
+                } else if(direction == 8) {
+                    board.spin(); //printf("RIGHT ROTATE\n");
+                    drawMyBoard();
+                }
+            }
+        }
+    }
+
     private void drawMyBoard() {
 
         for (int i = 0; i < ROW; i++) {
@@ -334,9 +402,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
