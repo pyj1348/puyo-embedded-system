@@ -14,8 +14,12 @@ package com.example.puyo;
 
 import android.graphics.Point;
 import java.util.HashMap;
-
+import java.util.ListIterator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.BitSet;
 
 public class Board {
@@ -328,7 +332,7 @@ public class Board {
         return y;
     }
 
-    public byte[] tostring() {
+    public String tostring() {
         BitSet bitset = new BitSet(200);
         int[][] tempboard = this.getboard();
         int stamp = 0;
@@ -352,22 +356,42 @@ public class Board {
                     stamp++;
                 }
             }
-        System.out.println("length" + bitset);
+        // 00 01 10 11 four
+        StringBuilder res_temp = new StringBuilder("");
+        Iterator<Puyo> iter = puyolist.iterator();
+        for (int a = 0; a < 2; a++) {
+            Puyo first = iter.next();
+            if (first != null) {
+                if (first.Getfirst() - 1 == 1 || first.Getfirst() - 1 == 0)
+                    res_temp.append("0");
+                res_temp.append(Integer.toBinaryString(first.Getfirst() - 1));
+                if (first.Getsecond() - 1 == 1 || first.Getsecond() - 1 == 0)
+                    res_temp.append("0");
+                res_temp.append(Integer.toBinaryString(first.Getsecond() - 1));
+            }
+        }
+        String qresult = res_temp.toString();
+        for (int a = 0; a < 8; a++) {
+            if (a < qresult.length())
+                if (qresult.charAt(a) == '1')
+                    bitset.set(a + stamp * 7);
+        }
         byte[] bytes = bitset.toByteArray();
-        return bytes;
+        String result = Base64.getEncoder().encodeToString(bytes);
+        return this.compress(result);
     }
 
-    public void board_update(byte[] string) {
-        BitSet bitset = BitSet.valueOf(string);
-        System.out.println("length" + bitset);
+    public void board_update(String string) {
+        String decompressed = this.decompress(string);
+        byte[] bytes = Base64.getDecoder().decode(decompressed);
+        BitSet bitset = BitSet.valueOf(bytes);
 
         mTiles = new int[x][y];
         int stamp = 0;
-        for (int i = 0; i < y; i++) {
+        for (int i = 0; i < y - 1; i++) {
             for (int k = 0; k < 2; k++) {
                 BitSet temp = bitset.get(stamp * 7, stamp * 7 + 7);
                 StringBuilder res = new StringBuilder("0000000");
-                System.out.print(temp + "" + stamp * 7 + "" + (stamp * 7 + 7));
                 for (String token : temp.toString().replace("{", "").replace("}", "").replace(" ", "").split(",")) {
                     if (!token.equals("")) {
                         res.setCharAt(Integer.parseInt(token), '1');
@@ -380,8 +404,24 @@ public class Board {
                 mTiles[k * 3 + 1 + 1][i] = hashres % 100 / 10;
                 mTiles[k * 3 + 1 + 2][i] = hashres % 10;
                 stamp++;
-
             }
+        }
+        BitSet temp = bitset.get(stamp * 7, stamp * 7 + 8);
+        StringBuilder res = new StringBuilder("00000000");
+        System.out.print(temp + "" + stamp * 7 + "" + (stamp * 7 + 8));
+        for (String token : temp.toString().replace("{", "").replace("}", "").replace(" ", "").split(",")) {
+            if (!token.equals("")) {
+                res.setCharAt(Integer.parseInt(token), '1');
+            }
+        }
+        int temp1, temp2 = 0;
+        String queuestring = res.toString();
+        puyolist = new PuyoQueue<Puyo>();
+        for (int a = 0; a < 8; a = a + 4) {
+            temp1 = Integer.parseInt(queuestring.substring(a, a + 2), 2) + 1;
+            temp2 = Integer.parseInt(queuestring.substring(a + 2, a + 4), 2) + 1;
+            Puyo temporary = new Puyo(temp1, temp2);
+            puyolist.enqueue(temporary);
         }
     }
 
@@ -392,6 +432,122 @@ public class Board {
             }
         }
         return -1;
+    }
+    private static int DICT_SIZE = 256;
+
+    /** Compress a string to a list of output symbols. */
+    public String compress(String uncompressed) {
+        uncompressed = uft8Encode(uncompressed);
+        // Build the dictionary.
+        int index = DICT_SIZE;
+        Map<String,Integer> dictionary = new HashMap<String,Integer>();
+        for (int i = 0; i < DICT_SIZE; i++)
+            dictionary.put("" + (char)i, i);
+
+        String w = "";
+        StringBuilder res = new StringBuilder();
+        for (char c : uncompressed.toCharArray()) {
+            String wc = w + c;
+            if (dictionary.containsKey(wc))
+                w = wc;
+            else {
+                int i = dictionary.get(w);
+                res.append((char) i);
+                // Add wc to the dictionary.
+                dictionary.put(wc, index++);
+                w = "" + c;
+            }
+        }
+
+        // Output the code for w.
+        if (!w.equals("")) {
+            int i = dictionary.get(w);
+            res.append((char) i);
+        }
+        return res.toString();
+    }
+
+    /** Decompress a list of output ks to a string. */
+    public String decompress(String compressed) {
+        // Build the dictionary.
+        int index = DICT_SIZE;
+        Map<Integer,String> dictionary = new HashMap<Integer,String>();
+        for (int i = 0; i < DICT_SIZE; i++)
+            dictionary.put(i, "" + (char)i);
+
+        char[] chars = compressed.toCharArray();
+        String w = "" + chars[0];
+        StringBuffer result = new StringBuffer(w);
+        for (int j = 1; j < chars.length; j++) {
+            int k = (int) chars[j];
+            String entry;
+            if (dictionary.containsKey(k))
+                entry = dictionary.get(k);
+            else if (k == index)
+                entry = w + w.charAt(0);
+            else
+                throw new IllegalArgumentException("Bad compressed k: " + k);
+
+            result.append(entry);
+
+            // Add w+entry[0] to the dictionary.
+            dictionary.put(index++, w + entry.charAt(0));
+
+            w = entry;
+        }
+        return utf8Decode(result.toString());
+    }
+
+    /**
+     * encode utf8 string into char 0 ~ 127
+     * @param text
+     * @return
+     */
+    public String uft8Encode(String text) {
+        StringBuilder res = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            int i = (int) c;
+            if (i < 128) {
+                res.append((char) i);
+            } else if (i > 127 && i < 2048) {
+                int j = (i >> 6) | 192;
+                res.append((char) j);
+                j = (i & 63) | 128;
+                res.append((char) j);
+            } else {
+                int j = (i >> 12) | 224;
+                res.append((char) j);
+                j = ((i >> 6) & 63) | 128;
+                res.append((char) j);
+                j = (c & 63) | 128;
+                res.append((char) j);
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * decode char 0 ~ 127 to utf8 string
+     * @param text
+     * @return
+     */
+    public static String utf8Decode(String text) {
+        StringBuilder res = new StringBuilder();
+        int i = 0;
+        char[] chars = text.toCharArray();
+        while (i < chars.length) {
+            int c = chars[i++];
+            if (c > 191 && c < 224) {
+                int c1 = chars[i++];
+                c = ((c & 31) << 6) | (c1 & 63);
+            } else if (c > 127) {
+                int c1 = chars[i++];
+                int c2 = chars[i++];
+                c = ((c & 15) << 12) | ((c1 & 63) << 6) | (c2 & 63);
+            }
+            res.append((char) c);
+        }
+        return res.toString();
     }
 
     /*

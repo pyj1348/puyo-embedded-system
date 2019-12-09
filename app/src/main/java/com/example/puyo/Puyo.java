@@ -22,6 +22,14 @@ public class Puyo {
         this.pos[1][1] = first;
         this.pos[0][1] = second;
     }
+    public Puyo(int first, int second){
+        this.first = first;
+        this.second = second;
+        this.spin = 1;
+        this.pos = a;
+        this.pos[1][1] = first;
+        this.pos[0][1] = second;
+    }
     public Puyo spin(){
         this.spin = (this.spin)%4+1;
         switch (spin) {
@@ -81,6 +89,12 @@ public class Puyo {
             }
         }
         return this;
+    }
+    public int Getfirst(){
+        return this.first;
+    }
+    public int Getsecond(){
+        return this.second;
     }
     public int Getspin(){
         return this.spin;
