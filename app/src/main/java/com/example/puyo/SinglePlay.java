@@ -18,9 +18,23 @@ public class SinglePlay extends AppCompatActivity {
     static int counter = 0;
     static int counter2 = 0;
     static int speed = 0;
-    private Board board;
-
+    static Board board;
+    static Timer timer = new Timer();
+    static Timer timer2 = new Timer();
     private ImageView[][] m_board_Image = new ImageView[ROW][COL];
+
+    static TimerTask tt = new TimerTask() {
+        @Override
+        public void run() {
+            counter++;
+        }
+    };
+    static TimerTask tt2 = new TimerTask() {
+        @Override
+        public void run() {
+            counter2++;
+        }
+    };
 
 
     private int[][] idArray = {
@@ -52,81 +66,75 @@ public class SinglePlay extends AppCompatActivity {
             }
         }
 
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                counter++;
-            }
-        };
-        TimerTask tt2 = new TimerTask() {
-            @Override
-            public void run() {
-                counter2++;
-            }
-        };
-        board = new Board();
-        drawMyBoard();
-
-        int score = 0;
-
-        int stagescore = 0;
-        int compare = counter;
-        Timer timer = new Timer();
-        Timer timer2 = new Timer();
         timer.schedule(tt, 0, 1000);
 
         timer2.schedule(tt2, 0, 100);
+
+
+        board = new Board();
         board.gen_puyo();
-        Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
-        Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+        class NewRunnable implements Runnable {
+            int score = 0;
+            int stagescore = 0;
+            int compare = counter;
+            Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+            Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
 
-        while (true) {
-            if (board.gen_puyo() == 0)
-                break;
-            int temp = counter;
-            while (temp + 1 != counter) {
+            @Override
+            public void run() {
+                while (true) {
+                    int temp = counter2;
+                    while (temp + 1 != counter2) {
 
-            }
-            if (compare != counter) {
-                if (curpoint.equals(latterpoint.x, latterpoint.y)) {
-                    board.move_down();
-                    drawMyBoard();
-                    curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
-                    if (curpoint.equals(latterpoint.x, latterpoint.y)) {
-                        board.end_step();
-                        board.update_map();
-                        drawMyBoard();
-                        stagescore = board.clear_board();
-                        if (stagescore != 0) {
-                            temp = counter;
-                            while (temp + 1 != counter) {
-
-                            }
-                            int multiplier = 1;
-                            while (stagescore != 0) {
-                                stagescore = stagescore + multiplier * board.clear_board();
-                                multiplier = multiplier * 4;
+                    }
+                    if (compare != counter) {
+                        if (curpoint.equals(latterpoint.x, latterpoint.y)) {
+                            board.move_down();
+                            drawMyBoard();
+                            curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+                            if (curpoint.equals(latterpoint.x, latterpoint.y)) {
+                                board.end_step();
                                 board.update_map();
                                 drawMyBoard();
-                                temp = counter;
-                                while (temp + 1 != counter) {
+                                stagescore = board.clear_board();
+                                if (stagescore != 0) {
+                                    temp = counter;
+                                    while (temp + 1 != counter) {
 
+                                    }
+                                    int multiplier = 1;
+                                    while (stagescore != 0) {
+                                        stagescore = stagescore + multiplier * board.clear_board();
+                                        multiplier = multiplier * 4;
+                                        board.update_map();
+                                        drawMyBoard();
+                                        temp = counter;
+                                        while (temp + 1 != counter) {
+
+                                        }
+                                    }
+                                    score = score + stagescore;
                                 }
-                            }
-                            score = score + stagescore;
+                            } else
+                                latterpoint = new Point(curpoint.x, curpoint.y);
                         }
-                    } else
-                        latterpoint = new Point(curpoint.x, curpoint.y);
+                        compare++;
+                    }
+                    if ((int) (counter / 30) > 0) {
+                        speed++;
+                        timer.schedule(tt, 0, 1000 / speed);
+                    }
+                    if (board.gen_puyo() == 0)
+                        break;
                 }
-                compare++;
-            }
-            if ((int) (counter / 30) > 0) {
-                speed++;
-                timer.schedule(tt, 0, 1000 / speed);
             }
         }
 
+        NewRunnable nr = new NewRunnable();
+        Thread t = new Thread(nr);
+        t.start();
     }
+
 
     private void drawMyBoard() {
 
