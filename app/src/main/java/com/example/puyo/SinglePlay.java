@@ -17,7 +17,7 @@ public class SinglePlay extends AppCompatActivity {
     static final int COL = 8;
     static int counter = 0;
     static int counter2 = 0;
-    static int speed = 0;
+    static int speed = 10;
     static Board board;
     static Timer timer = new Timer();
     static Timer timer2 = new Timer();
@@ -66,7 +66,7 @@ public class SinglePlay extends AppCompatActivity {
             }
         }
 
-        timer.schedule(tt, 0, 1000);
+        timer.schedule(tt, 0, 100);
 
         timer2.schedule(tt2, 0, 100);
 
@@ -83,11 +83,13 @@ public class SinglePlay extends AppCompatActivity {
             @Override
             public void run() {
                 while (true) {
+                    drawMyBoard();
+
                     int temp = counter2;
-                    while (temp + 1 != counter2) {
+                    while (temp + 1 > counter2) {
 
                     }
-                    if (compare != counter) {
+                    if (compare + speed <= counter) {
                         if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                             board.move_down();
                             drawMyBoard();
@@ -99,33 +101,34 @@ public class SinglePlay extends AppCompatActivity {
                                 stagescore = board.clear_board();
                                 if (stagescore != 0) {
                                     temp = counter;
-                                    while (temp + 1 != counter) {
+                                    while (temp + 5  > counter) {
 
                                     }
                                     int multiplier = 1;
                                     while (stagescore != 0) {
-                                        stagescore = stagescore + multiplier * board.clear_board();
+                                        stagescore = multiplier * board.clear_board();
                                         multiplier = multiplier * 4;
                                         board.update_map();
                                         drawMyBoard();
                                         temp = counter;
-                                        while (temp + 1 != counter) {
+                                        while (temp + 5 > counter) {
 
                                         }
+                                        score = score + stagescore;
                                     }
-                                    score = score + stagescore;
                                 }
-                            } else
-                                latterpoint = new Point(curpoint.x, curpoint.y);
+                                if (board.gen_puyo() == 0)
+                                    break;
+                            }
                         }
-                        compare++;
+                        latterpoint = new Point(curpoint.x, curpoint.y);
+                        compare = counter;
                     }
-                    if ((int) (counter / 30) > 0) {
-                        speed++;
-                        timer.schedule(tt, 0, 1000 / speed);
+                    if ((int) (counter / 30) > 10-speed) {
+                        speed--;
+                        compare = counter;
                     }
-                    if (board.gen_puyo() == 0)
-                        break;
+
                 }
             }
         }

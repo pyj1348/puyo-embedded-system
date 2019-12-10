@@ -116,60 +116,72 @@ public class Board {
     }
 
     public void move_down() {
-        int radius = 0;
-        if (this.check(radius)) {
-            position_puyo.y = position_puyo.y + 1;
+        if (handling_puyo != null) {
+            int radius = 0;
+            if (this.check(radius)) {
+                position_puyo.y = position_puyo.y + 1;
+            }
         }
     }
 
     public void move_left() {
-        int radius = 1;
-        if (this.check(radius)) {
-            position_puyo.x = position_puyo.x - 1;
+        if (handling_puyo != null) {
+
+            int radius = 1;
+            if (this.check(radius)) {
+                position_puyo.x = position_puyo.x - 1;
+            }
         }
     }
-    public Point get_puyoposition(){
+
+    public Point get_puyoposition() {
         return position_puyo;
     }
+
     public void move_right() {
-        int radius = 2;
-        if (this.check(radius)) {
-            position_puyo.x = position_puyo.x + 1;
+        if (handling_puyo != null) {
+
+            int radius = 2;
+            if (this.check(radius)) {
+                position_puyo.x = position_puyo.x + 1;
+            }
         }
     }
 
     public void spin() {
-        int radius = handling_puyo.Getspin() + 2;
-        if (this.check(radius)) {
-            handling_puyo.spin();
-        } else {
-            int res = this.extra_spin_check(radius);
-            if (radius == 3) {
-                if (res == 1)
-                    position_puyo.x++;
-                else if (res == 2) {
-                    position_puyo.y--;
-                }
+        if (handling_puyo != null) {
+
+            int radius = handling_puyo.Getspin() + 2;
+            if (this.check(radius)) {
                 handling_puyo.spin();
+            } else {
+                int res = this.extra_spin_check(radius);
+                if (radius == 3) {
+                    if (res == 1)
+                        position_puyo.x++;
+                    else if (res == 2) {
+                        position_puyo.y--;
+                    }
+                    handling_puyo.spin();
 
-            } else if (radius == 4) {
-                position_puyo.y++;
-                handling_puyo.spin(6);
-
-            } else if (radius == 5) {
-                if (res == 1)
-                    position_puyo.x--;
-                else if (res == 2) {
+                } else if (radius == 4) {
                     position_puyo.y++;
+                    handling_puyo.spin(6);
+
+                } else if (radius == 5) {
+                    if (res == 1)
+                        position_puyo.x--;
+                    else if (res == 2) {
+                        position_puyo.y++;
+                    }
+                    handling_puyo.spin();
+
+                } else if (radius == 6) {
+                    position_puyo.y--;
+                    handling_puyo.spin(4);
+
                 }
-                handling_puyo.spin();
-
-            } else if (radius == 6) {
-                position_puyo.y--;
-                handling_puyo.spin(4);
-
             }
-
         }
     }
 
@@ -216,7 +228,7 @@ public class Board {
                         return false;
                 } else if (radius == 0) {
                     if (handling_puyo.Getpos()[1 + k][1 + i] != 0
-                            && (position_puyo.y + k >= 11 || mTiles[position_puyo.x + i][position_puyo.y + k + 1] != 0))
+                            && (position_puyo.y + k >= 12 || mTiles[position_puyo.x + i][position_puyo.y + k + 1] != 0))
                         return false;
                 }
             }
@@ -257,12 +269,15 @@ public class Board {
     }
 
     public void end_step() {
-        for (int i = -1; i < 2; i++) {
-            for (int k = -1; k < 2; k++) {
-                if (position_puyo.x + i >= 0 && position_puyo.y + k >= 0 && position_puyo.y + k < this.y
-                        && position_puyo.x + i < x)
-                    mTiles[position_puyo.x + i][position_puyo.y + k] = mTiles[position_puyo.x + i][position_puyo.y + k]
-                            + handling_puyo.Getpos()[1 + k][1 + i];
+        if(handling_puyo !=null) {
+
+            for (int i = -1; i < 2; i++) {
+                for (int k = -1; k < 2; k++) {
+                    if (position_puyo.x + i >= 0 && position_puyo.y + k >= 0 && position_puyo.y + k < this.y
+                            && position_puyo.x + i < x)
+                        mTiles[position_puyo.x + i][position_puyo.y + k] = mTiles[position_puyo.x + i][position_puyo.y + k]
+                                + handling_puyo.Getpos()[1 + k][1 + i];
+                }
             }
         }
         position_puyo = initial_puyo;
