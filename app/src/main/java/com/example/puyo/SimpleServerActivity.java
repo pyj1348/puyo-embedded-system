@@ -33,6 +33,8 @@ public class SimpleServerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 players = 2;
                 server_do_undo(8080);
+                Intent intent = new Intent(SimpleServerActivity.this, Players2Activity.class);
+                startActivity(intent);
             }
         });
 
@@ -42,6 +44,8 @@ public class SimpleServerActivity extends AppCompatActivity {
                 players = 3;
                 server_do_undo(8080);
                 server_do_undo(8081);
+                Intent intent = new Intent(SimpleServerActivity.this, Players3Activity.class);
+                startActivity(intent);
             }
         });
 
@@ -52,6 +56,8 @@ public class SimpleServerActivity extends AppCompatActivity {
                 server_do_undo(8080);
                 server_do_undo(8081);
                 server_do_undo(8082);
+                Intent intent = new Intent(SimpleServerActivity.this, Players4Activity.class);
+                startActivity(intent);
             }
         });
 

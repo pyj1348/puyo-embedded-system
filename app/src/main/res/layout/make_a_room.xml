@@ -22,7 +22,7 @@
         android:id="@+id/menu_button2"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="멀티 플레이"
+        android:text="2인 플레이"
         android:layout_below="@+id/space1"
         android:layout_centerHorizontal="true"/>
 
