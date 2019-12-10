@@ -74,11 +74,7 @@ public class SinglePlay extends AppCompatActivity {
         while (true) {
             if (board.gen_puyo() == 0)
                 break;
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //wait for bit
             if (compare != counter) {
                 if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                     board.move_down();
@@ -90,22 +86,14 @@ public class SinglePlay extends AppCompatActivity {
                         drawMyBoard();
                         stagescore = board.clear_board();
                         if (stagescore != 0) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            //wait for a second
                             int multiplier = 1;
                             while (stagescore != 0) {
                                 stagescore = stagescore + multiplier * board.clear_board();
                                 multiplier = multiplier * 4;
                                 board.update_map();
                                 drawMyBoard();
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                                //wait for a second
                             }
                             score = score + stagescore;
                         }
