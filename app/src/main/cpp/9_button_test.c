@@ -9,7 +9,7 @@ int fd;
 unsigned char direction, i;
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_MainActivity_button_1open(JNIEnv *env, jobject thiz)
+Java_com_example_puyo_Players2Activity_button_1open(JNIEnv *env, jobject thiz)
 {
     fd = open("/dev/9_button", O_RDONLY);
     if(fd < 0) {
@@ -19,7 +19,7 @@ Java_com_example_puyo_MainActivity_button_1open(JNIEnv *env, jobject thiz)
 }
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_MainActivity_button_1read(JNIEnv *env, jobject thiz)
+Java_com_example_puyo_Players2Activity_button_1read(JNIEnv *env, jobject thiz)
 {
     if(read(fd, &direction, 1) != 1){
         return -1;
@@ -36,7 +36,7 @@ Java_com_example_puyo_MainActivity_button_1read(JNIEnv *env, jobject thiz)
 }
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_MainActivity_botton_1close(JNIEnv *env, jobject thiz)
+Java_com_example_puyo_Players2Activity_botton_1close(JNIEnv *env, jobject thiz)
 {
     close(fd);
     return 0;

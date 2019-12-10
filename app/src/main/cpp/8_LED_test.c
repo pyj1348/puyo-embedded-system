@@ -9,7 +9,7 @@ int fd;
 unsigned char ret;
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_MainActivity_LED_1write(JNIEnv *env, jobject thiz, jint combo)
+Java_com_example_puyo_Players2Activity_LED_1write(JNIEnv *env, jobject thiz, jint combo)
 {
     fd = open("/dev/8_LED", O_WRONLY);
     if(fd < 0){

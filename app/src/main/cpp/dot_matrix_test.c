@@ -17,7 +17,7 @@
 int fd;
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_MainActivity_matrix_1write(JNIEnv *env, jobject thiz, jint signal)
+Java_com_example_puyo_Players2Activity_matrix_1write(JNIEnv *env, jobject thiz, jint signal)
 {
     fd = open("/dev/dot_matrix", O_WRONLY);
     if(fd < 0){
