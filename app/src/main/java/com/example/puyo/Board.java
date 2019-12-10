@@ -1,10 +1,11 @@
 package com.example.puyo;
 
+import android.graphics.Point;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import java.awt.Point;
+
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,17 +13,19 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.ArrayList;
+
 import android.util.Base64;
+
 import java.util.BitSet;
 
 public class Board {
-    static final int hasharr[] = { 000, 001, 002, 003, 004, 010, 011, 012, 013, 014, 020, 021, 022, 023, 024, 030, 031,
+    static final int hasharr[] = {000, 001, 002, 003, 004, 010, 011, 012, 013, 014, 020, 021, 022, 023, 024, 030, 031,
             032, 033, 034, 040, 041, 042, 043, 044, 100, 101, 102, 103, 104, 110, 111, 112, 113, 114, 120, 121, 122,
             123, 124, 130, 131, 132, 133, 134, 140, 141, 142, 143, 144, 200, 201, 202, 203, 204, 210, 211, 212, 213,
             214, 220, 221, 222, 223, 224, 230, 231, 232, 233, 234, 240, 241, 242, 243, 244, 300, 301, 302, 303, 304,
             310, 311, 312, 313, 314, 320, 321, 322, 323, 324, 330, 331, 332, 333, 334, 340, 341, 342, 343, 344, 400,
             401, 402, 403, 404, 410, 411, 412, 413, 414, 420, 421, 422, 423, 424, 430, 431, 432, 433, 434, 440, 441,
-            442, 443, 444 };
+            442, 443, 444};
 
     private int[][] mTiles;
     private int x = 8;
@@ -31,8 +34,8 @@ public class Board {
     private Point position_puyo;
     private Point initial_puyo;
     private PuyoQueue<Puyo> puyolist;
-    static int[] dx = { -1, 0, 1, 0 };
-    static int[] dy = { 0, -1, 0, 1 };
+    static int[] dx = {-1, 0, 1, 0};
+    static int[] dy = {0, -1, 0, 1};
     static boolean[][] visited;
     static ArrayList<Point> poplist;
     HashMap<Integer, Integer> arrMap;
@@ -100,7 +103,7 @@ public class Board {
                             && position_puyo.x + i < x)
                         tiles[position_puyo.x + i][position_puyo.y
                                 + k] = mTiles[position_puyo.x + i][position_puyo.y + k]
-                                        + handling_puyo.Getpos()[1 + k][1 + i];
+                                + handling_puyo.Getpos()[1 + k][1 + i];
 
                 }
             }
@@ -125,7 +128,9 @@ public class Board {
             position_puyo.x = position_puyo.x - 1;
         }
     }
-
+    public Point get_puyoposition(){
+        return position_puyo;
+    }
     public void move_right() {
         int radius = 2;
         if (this.check(radius)) {
@@ -432,7 +437,9 @@ public class Board {
 
     private static int DICT_SIZE = 256;
 
-    /** Compress a string to a list of output symbols. */
+    /**
+     * Compress a string to a list of output symbols.
+     */
     public String compress(String uncompressed) {
         uncompressed = uft8Encode(uncompressed);
         // Build the dictionary.
@@ -464,7 +471,9 @@ public class Board {
         return res.toString();
     }
 
-    /** Decompress a list of output ks to a string. */
+    /**
+     * Decompress a list of output ks to a string.
+     */
     public String decompress(String compressed) {
         // Build the dictionary.
         int index = DICT_SIZE;
@@ -497,7 +506,7 @@ public class Board {
 
     /**
      * encode utf8 string into char 0 ~ 127
-     * 
+     *
      * @param text
      * @return
      */
@@ -526,7 +535,7 @@ public class Board {
 
     /**
      * decode char 0 ~ 127 to utf8 string
-     * 
+     *
      * @param text
      * @return
      */
@@ -552,28 +561,28 @@ public class Board {
     /*
      * // unit tests (DO NOT MODIFY) public static void main(String[] args) { Board
      * a = new Board();
-     * 
+     *
      * for (int q = 0; q < 100; q++) { //at first generate puyo if (a.gen_puyo() ==
      * 0) return; for (int k = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
      * System.out.print(a.getboard()[i][k]); } System.out.println(); }
      * System.out.println(); a.move_left(); a.move_left(); a.move_left();
      * a.move_left(); a.move_left(); a.move_left();
-     * 
+     *
      * a.move_down(); a.move_down(); a.move_down(); a.move_down();
-     * 
+     *
      * a.move_down(); a.move_down(); a.move_down(); a.move_down(); a.move_down();
      * a.move_down(); a.move_down(); a.move_down(); a.move_down(); a.move_right();
      * a.move_right(); a.move_right(); a.move_right(); a.move_right();
      * a.move_right(); a.move_right(); a.move_right();
-     * 
+     *
      * //after move please endwith end_step a.end_step();
-     * 
+     *
      * for (int k = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
      * System.out.print(a.getboard()[i][k]); } System.out.println(); }
      * System.out.println();
-     * 
+     *
      * //drop every puyo inthe air a.update_map();
-     * 
+     *
      * //score/point part clear_board n times to clear whole board int point =
      * a.clear_board(); int multiplier = 1; while (point != 0) { point =
      * multiplier*a.clear_board(); for (int k = 0; k < a.y; k++) { for (int i = 0; i
@@ -582,9 +591,9 @@ public class Board {
      * = 0; k < a.y; k++) { for (int i = 0; i < a.x; i++) {
      * System.out.print(a.getboard()[i][k]); } System.out.println(); }
      * System.out.println(); System.out.println("a.getboard()[i][k]");
-     * 
+     *
      * }
-     * 
+     *
      * }
      */
 }

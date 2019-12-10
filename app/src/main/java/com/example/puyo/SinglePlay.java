@@ -1,16 +1,21 @@
 package com.example.puyo;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class SinglePlay extends AppCompatActivity {
 
     static final int ROW = 14;
     static final int COL = 8;
-
+    static int counter = 0;
+    static int speed = 0;
     private Board board;
 
     private ImageView[][] m_board_Image = new ImageView[ROW][COL];
@@ -45,29 +50,60 @@ public class SinglePlay extends AppCompatActivity {
             }
         }
 
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                counter++;
+            }
+        };
 
         board = new Board();
-
-
-        board.gen_puyo();
         drawMyBoard();
 
-        for (int q = 0; q < 100; q++) {
-            //at first generate puyo
-
-            for (int k = 0; k < board.getY(); k++) {
-                for (int i = 0; i < board.getX(); i++) {
-                    System.out.print(board.getboard()[i][k]);
-                    //Log.d("", String.valueOf(board.getboard()[i][k]));
+        Point curpoint = board.get_puyoposition();
+        Point latterpoint = board.get_puyoposition();
+        int score = 0;
+        int stagescore = 0;
+        int compare = counter;
+        Timer timer = new Timer();
+        timer.schedule(tt, 0, 1000);
+        while (board.gen_puyo()!=0) {
+            if (compare != counter) {
+                if (latterpoint == curpoint) {
+                    board.move_down();
+                    curpoint = board.get_puyoposition();
+                    if (latterpoint == curpoint) {
+                        board.end_step();
+                        board.update_map();
+                        stagescore = board.clear_board();
+                        drawMyBoard();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        int multiplier = 1;
+                        while (stagescore != 0) {
+                            stagescore = stagescore + multiplier * board.clear_board();
+                            multiplier = multiplier * 4;
+                            board.update_map();
+                            drawMyBoard();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        score = score +stagescore;
+                    }
                 }
-                System.out.println();
             }
-
-            if (board.gen_puyo() == 0)
-                return;
-
+            if ((int) (counter / 30) > 0) {
+                speed++;
+                timer.schedule(tt, 0, 1000 / speed);
+            }
+            drawMyBoard();
         }
-
     }
 
     private void drawMyBoard() {
