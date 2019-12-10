@@ -16,6 +16,7 @@ public class SinglePlay extends AppCompatActivity {
     static final int ROW = 14;
     static final int COL = 8;
     static int counter = 0;
+    static int counter2 = 0;
     static int speed = 0;
     private Board board;
 
@@ -57,7 +58,12 @@ public class SinglePlay extends AppCompatActivity {
                 counter++;
             }
         };
-
+        TimerTask tt2 = new TimerTask() {
+            @Override
+            public void run() {
+                counter2++;
+            }
+        };
         board = new Board();
         drawMyBoard();
 
@@ -66,7 +72,10 @@ public class SinglePlay extends AppCompatActivity {
         int stagescore = 0;
         int compare = counter;
         Timer timer = new Timer();
+        Timer timer2 = new Timer();
         timer.schedule(tt, 0, 1000);
+
+        timer2.schedule(tt2, 0, 100);
         board.gen_puyo();
         Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
         Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
@@ -74,7 +83,10 @@ public class SinglePlay extends AppCompatActivity {
         while (true) {
             if (board.gen_puyo() == 0)
                 break;
-            //wait for bit
+            int temp = counter;
+            while (temp + 1 != counter) {
+
+            }
             if (compare != counter) {
                 if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                     board.move_down();
@@ -86,14 +98,20 @@ public class SinglePlay extends AppCompatActivity {
                         drawMyBoard();
                         stagescore = board.clear_board();
                         if (stagescore != 0) {
-                            //wait for a second
+                            temp = counter;
+                            while (temp + 1 != counter) {
+
+                            }
                             int multiplier = 1;
                             while (stagescore != 0) {
                                 stagescore = stagescore + multiplier * board.clear_board();
                                 multiplier = multiplier * 4;
                                 board.update_map();
                                 drawMyBoard();
-                                //wait for a second
+                                temp = counter;
+                                while (temp + 1 != counter) {
+
+                                }
                             }
                             score = score + stagescore;
                         }
