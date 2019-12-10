@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.btnSinglePlay)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Room.class);
+                Intent intent = new Intent(MainActivity.this, SinglePlay.class);
                 intent.putExtra("player1", 0);
                 startActivity(intent);
             }

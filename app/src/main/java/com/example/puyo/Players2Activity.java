@@ -136,7 +136,7 @@ public class Players2Activity extends AppCompatActivity {
         int stagescore = 0;
         int compare = counter;
         Timer timer = new Timer();
-        timer.schedule(tt, 0, 1000);
+        timer.schedule(tt, 0, 2000);
         while (board.gen_puyo()!=0) {
             if (compare != counter) {
                 if (latterpoint == curpoint) {

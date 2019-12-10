@@ -2,6 +2,7 @@ package com.example.puyo;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
@@ -60,50 +61,65 @@ public class SinglePlay extends AppCompatActivity {
         board = new Board();
         drawMyBoard();
 
-        Point curpoint = board.get_puyoposition();
-        Point latterpoint = board.get_puyoposition();
         int score = 0;
+
         int stagescore = 0;
         int compare = counter;
         Timer timer = new Timer();
         timer.schedule(tt, 0, 1000);
-        while (board.gen_puyo()!=0) {
+        board.gen_puyo();
+        Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+        Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+
+        while (true) {
+            if (board.gen_puyo() == 0)
+                break;
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (compare != counter) {
-                if (latterpoint == curpoint) {
+                if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                     board.move_down();
-                    curpoint = board.get_puyoposition();
-                    if (latterpoint == curpoint) {
+                    drawMyBoard();
+                    curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+                    if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                         board.end_step();
                         board.update_map();
-                        stagescore = board.clear_board();
                         drawMyBoard();
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        int multiplier = 1;
-                        while (stagescore != 0) {
-                            stagescore = stagescore + multiplier * board.clear_board();
-                            multiplier = multiplier * 4;
-                            board.update_map();
-                            drawMyBoard();
+                        stagescore = board.clear_board();
+                        if (stagescore != 0) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            int multiplier = 1;
+                            while (stagescore != 0) {
+                                stagescore = stagescore + multiplier * board.clear_board();
+                                multiplier = multiplier * 4;
+                                board.update_map();
+                                drawMyBoard();
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            score = score + stagescore;
                         }
-                        score = score +stagescore;
-                    }
+                    } else
+                        latterpoint = new Point(curpoint.x, curpoint.y);
                 }
+                compare++;
             }
             if ((int) (counter / 30) > 0) {
                 speed++;
                 timer.schedule(tt, 0, 1000 / speed);
             }
-            drawMyBoard();
         }
+
     }
 
     private void drawMyBoard() {
