@@ -22,6 +22,14 @@ public class Puyo {
         this.pos[1][1] = first;
         this.pos[0][1] = second;
     }
+    public Puyo(int first, int second){
+        this.first = first;
+        this.second = second;
+        this.spin = 1;
+        this.pos = a;
+        this.pos[1][1] = first;
+        this.pos[0][1] = second;
+    }
     public Puyo spin(){
         this.spin = (this.spin)%4+1;
         switch (spin) {
@@ -51,6 +59,42 @@ public class Puyo {
             }
         }
         return this;
+    }
+    public Puyo spin(int spinnum){
+        this.spin = spinnum;
+        switch (spinnum) {
+            case 1:{
+                this.pos = a;
+                this.pos[1][1] = first;
+                this.pos[0][1] = second;
+                break;
+            }
+            case 2:{
+                this.pos = b;
+                this.pos[1][1] = first;
+                this.pos[1][0] = second;
+                break;
+            }
+            case 3:{
+                this.pos = c;
+                this.pos[1][1] = first;
+                this.pos[2][1] = second;
+                break;
+            }
+            case 4:{
+                this.pos = d;
+                this.pos[1][1] = first;
+                this.pos[1][2] = second;
+                break;
+            }
+        }
+        return this;
+    }
+    public int Getfirst(){
+        return this.first;
+    }
+    public int Getsecond(){
+        return this.second;
     }
     public int Getspin(){
         return this.spin;
