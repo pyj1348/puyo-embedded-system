@@ -16,7 +16,7 @@ int fd, pos;
 const char *num, *ip;
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_Players2Activity_LCD_1write(JNIEnv *env, jobject thiz, jstring game_mode, jstring address)
+Java_com_example_puyo_SinglePlay_LCD_1write(JNIEnv *env, jobject thiz, jstring game_mode, jstring address)
 {
     fd = open("/dev/text_LCD", O_WRONLY);
     if(fd < 0){

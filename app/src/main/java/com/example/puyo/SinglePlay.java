@@ -13,6 +13,39 @@ import java.util.TimerTask;
 
 public class SinglePlay extends AppCompatActivity {
 
+    ///// JNI
+
+    // Used to load the native library on application startup.
+    static {
+        // displays game mode, player's name
+        System.loadLibrary("text_LCD_test");
+
+        // displays player's game score
+        System.loadLibrary("7_segment_test");
+
+        // displays other game status, effects
+        System.loadLibrary("8_LED_test");
+        System.loadLibrary("dot_matrix_test");
+
+        // Left/Right/Up/Down Control Input
+        System.loadLibrary("9_button_test");
+    }
+
+    public native int LCD_write(String game_mode, String address);
+
+    public native int segment_write(int score);
+
+    public native int LED_write(int combo); // explosion combo
+
+    public native int matrix_write(int signal); // explosion and termination
+
+    public native int button_open();
+
+    public native int button_read();
+
+    public native int botton_close();
+
+    //////// JNI
     static final int ROW = 14;
     static final int COL = 8;
     static int counter = 0;
@@ -146,6 +179,14 @@ public class SinglePlay extends AppCompatActivity {
         NewRunnable nr = new NewRunnable();
         Thread t = new Thread(nr);
         t.start();
+
+        LCD_write("1 player", "165.194.15.1");
+        segment_write(0010);
+        LED_write(1);
+        matrix_write(1);
+
+        ButtonThread thread = new ButtonThread();
+        thread.start();
     }
 
     private void drawMyBoard() {
@@ -179,6 +220,40 @@ public class SinglePlay extends AppCompatActivity {
             m_board_Image[i][0].setImageResource(R.drawable.wall);
             m_board_Image[i][7].setImageResource(R.drawable.wall);
         }
+    }
+
+    private class ButtonThread extends Thread {
+        private static final String TAG = "ButtonThread";
+
+        public ButtonThread() { // initialization
+            button_open();
+        }
+
+        public void run() {
+            int direction;
+            int temp = 0;
+            while (true) {
+
+                direction = button_read();
+                if (temp != direction) {
+                    if (direction == 1) {
+                        board.spin(); // printf("LEFT ROTATE\n");
+                        drawMyBoard();
+                    } else if (direction == 2) {
+                        board.move_left(); // printf("LEFT MOVE\n");
+                        drawMyBoard();
+                    } else if (direction == 4) {
+                        board.move_right(); // printf("RIGHT MOVE\n");
+                        drawMyBoard();
+                    } else if (direction == 8) {
+                        board.spin(); // printf("RIGHT ROTATE\n");
+                        drawMyBoard();
+                    }
+                }
+                temp = direction;
+            }
+        }
+        // button_close();
     }
 
     @Override
