@@ -26,7 +26,7 @@
         <activity android:name=".Players2Activity"/>
         <activity android:name=".Players3Activity"/>
         <activity android:name=".Players4Activity"/>
-
+        <activity android:name=".MultiActivity"/>
         <activity android:name=".SimpleClientActivity"/>
 
     </application>
