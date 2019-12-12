@@ -14,4 +14,6 @@
 .cxx
 .project
 .settings/
-app/
+app/.classpath
+app/.settings/
+.settings/
