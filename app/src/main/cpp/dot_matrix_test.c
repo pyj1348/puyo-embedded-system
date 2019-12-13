@@ -59,3 +59,25 @@ Java_com_example_puyo_Players2Activity_matrix_1write(JNIEnv *env, jobject thiz, 
     close(fd);
     return 0;
 } 
+
+JNIEXPORT jint JNICALL
+Java_com_example_puyo_MultiActivity_matrix_1write(JNIEnv *env, jobject thiz, jint signal)
+{
+    fd = open("/dev/dot_matrix", O_WRONLY);
+    if(fd < 0){
+        return -1;
+    }
+
+    if(signal == 0){
+        ioctl(fd, DRIVER_EXPLOSION, NULL, _IOC_SIZE(DRIVER_EXPLOSION));
+    }
+    else if(signal > 0 && signal < 5){
+        write(fd, &signal, 1);
+    }
+    else if(signal == 5){
+        ioctl(fd, DRIVER_GAME_OVER, NULL, _IOC_SIZE(DRIVER_GAME_OVER));
+    }
+
+    close(fd);
+    return 0;
+} 

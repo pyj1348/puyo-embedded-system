@@ -42,3 +42,28 @@ Java_com_example_puyo_SinglePlay_LCD_1write(JNIEnv *env, jobject thiz, jstring g
 
 // (*env)->ReleaseStringUTFChars();
 // (*env)->NewStringUTF() 
+
+JNIEXPORT jint JNICALL
+Java_com_example_puyo_MultiActivity_LCD_1write(JNIEnv *env, jobject thiz, jstring game_mode, jstring address)
+{
+    fd = open("/dev/text_LCD", O_WRONLY);
+    if(fd < 0){
+        return -1;
+    }
+
+    num = (*env)->GetStringUTFChars(env, game_mode, NULL);
+    ip = (*env)->GetStringUTFChars(env, address, NULL);
+
+    pos = 0;
+    ioctl(fd, DRIVER_SET_CURSOR_POS, &pos, _IOC_SIZE(DRIVER_SET_CURSOR_POS));
+    write(fd, num, strlen(num));
+
+    pos = 16;
+    ioctl(fd, DRIVER_SET_CURSOR_POS, &pos, _IOC_SIZE(DRIVER_SET_CURSOR_POS));
+    write(fd, ip, strlen(ip));
+
+    close(fd);
+
+    return 0;
+
+}
