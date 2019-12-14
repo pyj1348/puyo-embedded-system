@@ -99,6 +99,15 @@ public class PuyoQueue<Item> implements Iterable<Item> {
         }
     }
 
+    public Item getFirstItem(){
+        if (isEmpty()) throw new NoSuchElementException("Queue underflow");
+        return first.item;
+    }
+
+    public Item getNextitem(){
+        if (isEmpty()) throw new NoSuchElementException("Queue underflow");
+        return first.next.item;
+    }
 
     /**
      * Unit tests the <tt>Queue</tt> data type.

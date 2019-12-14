@@ -1,10 +1,12 @@
 package com.example.puyo;
 
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -101,7 +103,7 @@ public class MultiActivity extends AppCompatActivity {
         }
         componentArray boards = new componentArray();
         arrays = new ArrayList<Integer>();
-        int number;
+        int number = 0;
         // number is the number of the player passed from previous activity
         if (number <= 4) {
             sub3_idArray = boards.get_4array(number);
@@ -266,9 +268,10 @@ public class MultiActivity extends AppCompatActivity {
             handleimage[i][7].setImageResource(R.drawable.wall);
         }
     }
-
+    
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void drawSubBoard(String packet) {
-        ImageView[][] handleimage;
+        ImageView[][] handleimage = new ImageView[0][];
         /* sub board 1 */
         for (int a : arrays) {
             if (a == 1 && packet.startsWith(Integer.toString(a)))
@@ -325,6 +328,8 @@ public class MultiActivity extends AppCompatActivity {
 
         return super.onKeyDown(keyCode, msg);
     }
+    
+    /*
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
@@ -348,5 +353,5 @@ public class MultiActivity extends AppCompatActivity {
         }
 
         return super.onKeyDown(keyCode, msg);
-    }
+    } */
 }

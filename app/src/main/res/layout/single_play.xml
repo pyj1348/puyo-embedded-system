@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/sp_my_board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -774,6 +775,91 @@
                 android:layout_height="20dp"
                 android:src="@drawable/none"></ImageView>
         </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/sp_que_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/sp_my_board"
+        android:layout_centerHorizontal="true">
+
+        <Space
+            android:id="@+id/sp_sp1"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_sp_que_02"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/none"></ImageView>
+
+            <ImageView
+                android:id="@+id/iv_sp_que_01"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/none"></ImageView>
+
+        </LinearLayout>
+
+        <Space
+            android:id="@+id/sp_sp2"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_sp_que_04"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/none"></ImageView>
+
+            <ImageView
+                android:id="@+id/iv_sp_que_03"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/none"></ImageView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_above="@id/sp_my_board"
+        android:layout_toRightOf="@id/sp_my_board">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SCORE"
+            android:textSize="20dp"/>
+
+        <Space
+            android:id="@+id/sp_sp3"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/sp_tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="15dp" />
     </LinearLayout>
 
 </RelativeLayout>

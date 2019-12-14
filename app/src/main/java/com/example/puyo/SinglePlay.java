@@ -2,9 +2,10 @@ package com.example.puyo;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,6 +56,11 @@ public class SinglePlay extends AppCompatActivity {
     static Timer timer = new Timer();
     static Timer timer2 = new Timer();
     private ImageView[][] m_board_Image = new ImageView[ROW][COL];
+    private ImageView[] m_puyoque_Image1 = new ImageView[2];
+    private ImageView[] m_puyoque_Image2 = new ImageView[2];
+    private TextView score_TextView;
+
+
 
     static TimerTask tt = new TimerTask() {
         @Override
@@ -106,9 +112,18 @@ public class SinglePlay extends AppCompatActivity {
 
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
-                m_board_Image[i][j] = (ImageView) findViewById(idArray[i][j]);
+                m_board_Image[i][j] = findViewById(idArray[i][j]);
             }
         }
+
+        m_puyoque_Image1[0] = findViewById(R.id.iv_sp_que_01);
+        m_puyoque_Image1[1] = findViewById(R.id.iv_sp_que_02);
+
+        m_puyoque_Image2[0] = findViewById(R.id.iv_sp_que_03);
+        m_puyoque_Image2[1] = findViewById(R.id.iv_sp_que_04);
+
+        score_TextView = findViewById(R.id.sp_tv_score);
+
         initBoard();
         timer.schedule(tt, 0, 100);
 
@@ -158,6 +173,7 @@ public class SinglePlay extends AppCompatActivity {
 
                                         }
                                         score = score + stagescore;
+                                        //score_TextView.setText(score);  // Draw the score;
                                     }
                                 }
                                 if (board.gen_puyo() == 0)
@@ -190,7 +206,66 @@ public class SinglePlay extends AppCompatActivity {
     }
 
     private void drawMyBoard() {
+        Puyo first = board.getPuyoQueue().getFirstItem();
+        Puyo second = board.getPuyoQueue().getNextitem();
 
+        /*      Draw Puyo Queue     */
+
+        /*      First of First  */
+        if (first.Getfirst() == 1) {
+            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_blue);
+        } else if (first.Getfirst() == 2) {
+            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_green);
+        } else if (first.Getfirst() == 3) {
+            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_red);
+        } else if (first.Getfirst() == 4) {
+            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            m_puyoque_Image1[0].setImageResource(R.drawable.none);
+        }
+
+        /*      Second of First  */
+        if (first.Getsecond() == 1) {
+            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_blue);
+        } else if (first.Getsecond() == 2) {
+            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_green);
+        } else if (first.Getsecond() == 3) {
+            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_red);
+        } else if (first.Getsecond() == 4) {
+            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            m_puyoque_Image1[1].setImageResource(R.drawable.none);
+        }
+
+
+        /*      First of Second  */
+        if (second.Getfirst() == 1) {
+            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_blue);
+        } else if (second.Getfirst() == 2) {
+            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_green);
+        } else if (second.Getfirst() == 3) {
+            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_red);
+        } else if (second.Getfirst() == 4) {
+            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            m_puyoque_Image2[0].setImageResource(R.drawable.none);
+        }
+
+        /*      Second of Second  */
+        if (second.Getsecond() == 1) {
+            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_blue);
+        } else if (second.Getsecond() == 2) {
+            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_green);
+        } else if (second.Getsecond() == 3) {
+            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_red);
+        } else if (second.Getsecond() == 4) {
+            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            m_puyoque_Image2[1].setImageResource(R.drawable.none);
+        }
+
+
+        /*      Draw Board     */
         for (int i = 1; i < ROW - 1; i++) {
             for (int j = 1; j < COL - 1; j++) {
                 if (board.getboard()[j][i] == 1) {

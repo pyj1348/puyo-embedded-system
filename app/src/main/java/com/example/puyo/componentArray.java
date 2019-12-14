@@ -316,7 +316,10 @@ public class componentArray {
             return id3Array;
         case 4:
             return id4Array;
+        default:
+            return null;
         }
+
     }
 
     public int[][] get_2array(int number) {
@@ -327,7 +330,9 @@ public class componentArray {
                 return sub1_id3Array;
             case 4:
                 return sub1_id4Array;
-            }
+            default:
+                return null;
+        }
     }
 
     public int[][] get_3array(int number) {
@@ -336,14 +341,19 @@ public class componentArray {
                 return sub2_id3Array;
             case 4:
                 return sub2_id4Array;
-            }
+            default:
+                return null;
+
+        }
     }
 
     public int[][] get_4array(int number) {
         switch (number) {
             case 4:
                 return sub2_id4Array;
-            }
+            default:
+                return null;
+        }
     }
 
 }
