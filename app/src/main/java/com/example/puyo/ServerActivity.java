@@ -104,7 +104,7 @@ public class ServerActivity extends AppCompatActivity {
 
                         //server_IP = InetAddress.getLocalHost().getHostAddress();
                         Socket Socket = new Socket("192.168.0.1", 80);
-                        server_IP = String.valueOf(Socket.getLocalAddress());
+                        server_IP = Socket.getLocalAddress().getHostAddress(); // getInetAddress
                         server_socket.bind(new InetSocketAddress(server_IP, server_port));
 
                         client_slot.put(server_IP, 0);
@@ -123,7 +123,6 @@ public class ServerActivity extends AppCompatActivity {
 
                             InetSocketAddress client = (InetSocketAddress)socket.getRemoteSocketAddress();
                             String client_IP = client.getAddress().getHostAddress();
-                            //int client_port = client.getPort();
                             client_slot.put(client_IP, slot);
                             Log.d("client IP", client_IP);
 

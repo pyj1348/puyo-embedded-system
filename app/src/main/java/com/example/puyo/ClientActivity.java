@@ -29,7 +29,7 @@ import java.util.List;
 
 public class ClientActivity extends AppCompatActivity {
     private static List<String> server_IP = new ArrayList<>(
-            Arrays.asList("192.168.0.1", "192.168.0.2", "192.168.0.3", "192.168.0.4"));
+            Arrays.asList("192.168.0.2", "192.168.0.3", "192.168.0.4", "192.168.0.5"));
     private static int server_port = 5000;
 
     private String client_IP;
@@ -44,8 +44,12 @@ public class ClientActivity extends AppCompatActivity {
         setContentView(R.layout.try_to_join);
 
         try {
-            client_IP = InetAddress.getLocalHost().getHostAddress();
+            //client_IP = InetAddress.getLocalHost().getHostAddress();
+            Socket Socket = new Socket("192.168.0.1", 80);
+            client_IP = Socket.getLocalAddress().getHostAddress();
         } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         server_IP.remove(client_IP); // 성공했다고 가정
@@ -53,7 +57,7 @@ public class ClientActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.menu_button1)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try_to_join();
+                try_to_join(0);
             }
         });
 
@@ -77,10 +81,10 @@ public class ClientActivity extends AppCompatActivity {
         });
     }
 
-    private void try_to_join(){
+    private void try_to_join(int order){ // 만약 틀렸다면?
         Socket socket = new Socket();
         try {
-            socket.connect(new InetSocketAddress(server_IP.get(3), 5000));
+            socket.connect(new InetSocketAddress(server_IP.get(order), 5000));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             out.write("JOIN:" + "\n");
@@ -110,16 +114,16 @@ public class ClientActivity extends AppCompatActivity {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }/* finally {
-                    try{
-                        if( socket != null && !socket.isClosed()){
-                            socket.close();
-                        }
-                    }
-                    catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }*/
+        }/*finally {
+            try{
+                if( socket != null && !socket.isClosed()){
+                    socket.close();
+                }
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+        }*/
     }
 
     public static class ClientThread extends Thread { // public class -> java
