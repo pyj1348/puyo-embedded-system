@@ -1,10 +1,13 @@
 package com.example.puyo;
 
+import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -32,17 +35,12 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     public native int LCD_write(String game_mode, String address);
-
     public native int segment_write(int score);
-
     public native int LED_write(int combo); // explosion combo
-
     public native int matrix_write(int signal); // explosion and termination
 
     public native int button_open();
-
     public native int button_read();
-
     public native int botton_close();
 
     ///// JNI
@@ -101,7 +99,9 @@ public class MultiActivity extends AppCompatActivity {
         }
         componentArray boards = new componentArray();
         arrays = new ArrayList<Integer>();
-        int number;
+
+        int number = getIntent().getExtras().getInt("players");
+
         // number is the number of the player passed from previous activity
         if (number <= 4) {
             sub3_idArray = boards.get_4array(number);
@@ -267,8 +267,9 @@ public class MultiActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void drawSubBoard(String packet) {
-        ImageView[][] handleimage;
+        ImageView[][] handleimage = null;
         /* sub board 1 */
         for (int a : arrays) {
             if (a == 1 && packet.startsWith(Integer.toString(a)))
@@ -303,30 +304,6 @@ public class MultiActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent msg) {
-
-        switch (keyCode) {
-        case KeyEvent.KEYCODE_DPAD_LEFT:
-            board.move_left();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_RIGHT:
-            board.move_right();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_UP:
-            board.spin();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_DOWN:
-            board.move_down();
-            drawMyBoard();
-            break;
-        }
-
-        return super.onKeyDown(keyCode, msg);
-    }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
         switch (keyCode) {
         case KeyEvent.KEYCODE_DPAD_LEFT:

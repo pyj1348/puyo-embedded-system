@@ -27,7 +27,7 @@ Java_com_example_puyo_SinglePlay_LED_1write(JNIEnv *env, jobject thiz, jint comb
 }
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_Players2Activity_LED_1write(JNIEnv *env, jobject thiz, jint combo)
+Java_com_example_puyo_MultiActivity_LED_1write(JNIEnv *env, jobject thiz, jint combo)
 {
     fd = open("/dev/8_LED", O_WRONLY);
     if(fd < 0){

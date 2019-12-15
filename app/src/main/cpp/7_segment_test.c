@@ -39,7 +39,7 @@ Java_com_example_puyo_SinglePlay_segment_1write(JNIEnv *env, jobject thiz, jint 
 }
 
 JNIEXPORT jint JNICALL
-Java_com_example_puyo_Players2Activity_segment_1write(JNIEnv *env, jobject thiz, jint score)
+Java_com_example_puyo_MultiActivity_segment_1write(JNIEnv *env, jobject thiz, jint score)
 {
     fd = open("/dev/7_segment", O_WRONLY);
     if(fd < 0){
