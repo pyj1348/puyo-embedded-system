@@ -58,7 +58,7 @@ public class SinglePlay extends AppCompatActivity {
     private ImageView[][] m_board_Image = new ImageView[ROW][COL];
     private ImageView[] m_puyoque_Image1 = new ImageView[2];
     private ImageView[] m_puyoque_Image2 = new ImageView[2];
-    private TextView score_TextView;
+    private TextView m_score_TextView;
 
 
 
@@ -116,13 +116,13 @@ public class SinglePlay extends AppCompatActivity {
             }
         }
 
-        m_puyoque_Image1[0] = findViewById(R.id.iv_sp_que_01);
-        m_puyoque_Image1[1] = findViewById(R.id.iv_sp_que_02);
+        m_puyoque_Image1[0] = findViewById(R.id.sp_que_iv_01);
+        m_puyoque_Image1[1] = findViewById(R.id.sp_que_iv_02);
 
-        m_puyoque_Image2[0] = findViewById(R.id.iv_sp_que_03);
-        m_puyoque_Image2[1] = findViewById(R.id.iv_sp_que_04);
+        m_puyoque_Image2[0] = findViewById(R.id.sp_que_iv_03);
+        m_puyoque_Image2[1] = findViewById(R.id.sp_que_iv_04);
 
-        score_TextView = findViewById(R.id.sp_tv_score);
+        m_score_TextView = findViewById(R.id.sp_score_title_iv);
 
         initBoard();
         timer.schedule(tt, 0, 100);

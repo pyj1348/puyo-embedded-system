@@ -5,21 +5,23 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/p4_my_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
         <Space
-            android:id="@+id/p4_sp1"
+            android:id="@+id/p4_my_frame_sp"
             android:layout_width="10dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <LinearLayout
+            android:id="@+id/p4_my_board_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/p4_sp1"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/p4_my_frame_sp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -587,16 +589,19 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/none"></ImageView>
+
                 <ImageView
                     android:id="@+id/iv_4p_82"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/none"></ImageView>
+
                 <ImageView
                     android:id="@+id/iv_4p_83"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/none"></ImageView>
+
                 <ImageView
                     android:id="@+id/iv_4p_84"
                     android:layout_width="20dp"
@@ -787,24 +792,112 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/p4_my_que_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/p4_my_board_layout"
+            android:layout_toLeftOf="@id/p4_my_score_layout"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_my_que_iv_02"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_my_que_iv_01"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_my_que_sp2"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_my_que_iv_04"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_my_que_iv_03"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_my_que_sp3"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_my_score_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/p4_my_board_layout"
+            android:layout_toRightOf="@id/p4_my_board_layout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/p4_my_score_title_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SCORE"
+                android:textSize="20dp" />
+
+            <Space
+                android:id="@+id/p4_my_score_sp"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/p4_my_score_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="15dp" />
+        </LinearLayout>
+
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/p4_sub1_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
         <Space
-            android:id="@+id/p4_sp2"
+            android:id="@+id/p4_sub1_frame_sp"
             android:layout_width="12dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <LinearLayout
+            android:id="@+id/p4_sub1_board_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/p4_sp2"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/p4_sub1_frame_sp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -1576,23 +1669,113 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub1_que_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/p4_sub1_board_layout"
+            android:layout_toLeftOf="@id/p4_sub1_score_layout"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub1_que_iv_02"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub1_que_iv_01"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub1_que_sp2"
+                android:layout_width="6dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub1_que_iv_04"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub1_que_iv_03"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub1_que_sp3"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub1_score_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/p4_sub1_board_layout"
+            android:layout_toRightOf="@id/p4_sub1_board_layout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/p4_sub1_score_title_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SCORE"
+                android:textSize="12dp" />
+
+            <Space
+                android:id="@+id/p4_sub1_score_sp"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/p4_sub1_score_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="9dp" />
+        </LinearLayout>
+
     </RelativeLayout>
+
     <RelativeLayout
+        android:id="@+id/p4_sub2_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
         <Space
-            android:id="@+id/p4_sp3"
+            android:id="@+id/p4_sub2_frame_sp"
             android:layout_width="12dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <LinearLayout
+            android:id="@+id/p4_sub2_board_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/p4_sp3"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/p4_sub2_frame_sp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -2364,24 +2547,113 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub2_que_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/p4_sub2_board_layout"
+            android:layout_toLeftOf="@id/p4_sub2_score_layout"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub2_que_iv_02"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub2_que_iv_01"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub2_que_sp2"
+                android:layout_width="6dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub2_que_iv_04"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub2_que_iv_03"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub2_que_sp3"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub2_score_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/p4_sub2_board_layout"
+            android:layout_toRightOf="@id/p4_sub2_board_layout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/p4_sub2_score_title_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SCORE"
+                android:textSize="12dp" />
+
+            <Space
+                android:id="@+id/p4_sub2_score_sp"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/p4_sub2_score_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="9dp" />
+        </LinearLayout>
+
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/p4_sub3_frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
         <Space
-            android:id="@+id/p4_sp4"
+            android:id="@+id/p4_sub3_frame_sp"
             android:layout_width="12dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true" />
 
         <LinearLayout
+            android:id="@+id/p4_sub3_board_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toRightOf="@id/p4_sp4"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/p4_sub3_frame_sp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -3153,5 +3425,92 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub3_que_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/p4_sub3_board_layout"
+            android:layout_toLeftOf="@id/p4_sub3_score_layout"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub3_que_iv_02"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub3_que_iv_01"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub3_que_sp2"
+                android:layout_width="6dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/p4_sub3_que_iv_04"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+                <ImageView
+                    android:id="@+id/p4_sub3_que_iv_03"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/none"></ImageView>
+
+            </LinearLayout>
+
+            <Space
+                android:id="@+id/p4_sub3_que_sp3"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p4_sub3_score_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/p4_sub3_board_layout"
+            android:layout_toRightOf="@id/p4_sub3_board_layout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/p4_sub3_score_title_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SCORE"
+                android:textSize="12dp" />
+
+            <Space
+                android:id="@+id/p4_sub3_score_sp"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/p4_sub3_score_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="9dp" />
+        </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>
