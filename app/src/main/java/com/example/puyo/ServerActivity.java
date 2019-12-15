@@ -3,6 +3,7 @@ package com.example.puyo;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -47,6 +48,13 @@ public class ServerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.make_a_room);
 
+        ((Button) findViewById(R.id.menu_button1)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                make_a_room(1, 0);
+            }
+        });
+
         ((Button) findViewById(R.id.menu_button2)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,29 +67,29 @@ public class ServerActivity extends AppCompatActivity {
             }
         });
 
-        ((Button) findViewById(R.id.menu_button4)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                client_number = 3;
-                client_check = 0;
-                Intent intent = new Intent(ServerActivity.this, RoomActivity.class);
-                intent.putExtra("client_number", client_number);
-                intent.putExtra("slot", slot);
-                startActivity(intent);
-
-                //if(server_thread == null){
-                    server_thread = new ServerThread();
-                    server_thread.start();
-                //}
-            }
-        });
-
         ((Button) findViewById(R.id.menu_button0)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
+
+    private void make_a_room(int client_number, int client_check){
+        this.client_number = client_number;
+        this.client_check = client_check;
+
+        /*
+        Intent intent = new Intent(ServerActivity.this, RoomActivity.class);
+        intent.putExtra("client_number", client_number);
+        intent.putExtra("slot", slot);
+        startActivity(intent);
+        */
+
+        //if(server_thread == null){
+        server_thread = new ServerThread();
+        server_thread.start();
+        //}
     }
 
     private class ServerThread extends Thread {
@@ -94,10 +102,13 @@ public class ServerActivity extends AppCompatActivity {
                     try {
                         server_socket = new ServerSocket();
 
-                        server_IP = InetAddress.getLocalHost().getHostAddress();
+                        //server_IP = InetAddress.getLocalHost().getHostAddress();
+                        Socket Socket = new Socket("192.168.0.1", 80);
+                        server_IP = String.valueOf(Socket.getLocalAddress());
                         server_socket.bind(new InetSocketAddress(server_IP, server_port));
 
                         client_slot.put(server_IP, 0);
+                        Log.d("server IP", server_IP);
 
                         while (true) {
                             // 연결 요청이 들어올 때까지 block 상태이다.
@@ -114,6 +125,7 @@ public class ServerActivity extends AppCompatActivity {
                             String client_IP = client.getAddress().getHostAddress();
                             //int client_port = client.getPort();
                             client_slot.put(client_IP, slot);
+                            Log.d("client IP", client_IP);
 
                             new SocketThread(socket, slot).start();
 

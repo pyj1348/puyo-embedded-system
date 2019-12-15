@@ -50,6 +50,13 @@ public class ClientActivity extends AppCompatActivity {
         }
         server_IP.remove(client_IP); // 성공했다고 가정
 
+        ((Button) findViewById(R.id.menu_button1)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try_to_join();
+            }
+        });
+
         ((Button) findViewById(R.id.menu_button2)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,40 +69,48 @@ public class ClientActivity extends AppCompatActivity {
             }
         });
 
-        ((Button) findViewById(R.id.menu_button4)).setOnClickListener(new View.OnClickListener() {
+        ((Button) findViewById(R.id.menu_button0)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Socket socket = new Socket();
-                try {
-                    socket.connect(new InetSocketAddress(server_IP.get(3), 5000));
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    out = new PrintWriter(socket.getOutputStream(), true);
-                    out.write("JOIN:" + "\n");
-                    out.flush();
+                finish();
+            }
+        });
+    }
 
-                    while (true) {
-                        s = in.readLine();
-                        String[] tokens = s.split(":");
-                        if ("BUILD:".equals(tokens[0])) {
-                            // client_number, client_slot 정보를 바탕으로 game 을 생성한다.
-                            Intent intent = new Intent(ClientActivity.this, RoomActivity.class);
-                            //intent.putExtra("client_number", client_number);
-                            //intent.putExtra("slot", slot);
-                            startActivity(intent);
-                            break;
-                        }
-                    }
-                    client_thread = new ClientThread(socket);
-                    client_thread.start();
+    private void try_to_join(){
+        Socket socket = new Socket();
+        try {
+            socket.connect(new InetSocketAddress(server_IP.get(3), 5000));
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            out.write("JOIN:" + "\n");
+            out.flush();
 
-                    // READY or EXIT 는 Button 내부에서 out.flush.
-                    // START 이후로는 Device 입력마다 갱신된 Board 를 out.flush.
+            while (true) {
+                s = in.readLine();
+                String[] tokens = s.split(":");
+                if ("BUILD:".equals(tokens[0])) {
+                    // client_number, client_slot 정보를 바탕으로 game 을 생성한다.
+                    /*
+                    Intent intent = new Intent(ClientActivity.this, RoomActivity.class);
+                    intent.putExtra("client_number", client_number);
+                    intent.putExtra("slot", slot);
+                    startActivity(intent);
+                    */
+                    break;
+                }
+            }
+            client_thread = new ClientThread(socket);
+            client_thread.start();
 
-                    // client_thread.stop();
+            // READY or EXIT 는 Button 내부에서 out.flush.
+            // START 이후로는 Device 입력마다 갱신된 Board 를 out.flush.
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }/* finally {
+            // client_thread.stop();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }/* finally {
                     try{
                         if( socket != null && !socket.isClosed()){
                             socket.close();
@@ -105,16 +120,8 @@ public class ClientActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }*/
-            }
-        });
-
-        ((Button) findViewById(R.id.menu_button0)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
+
     public static class ClientThread extends Thread { // public class -> java
         /*
         private static String GIVEN_SERVER;
