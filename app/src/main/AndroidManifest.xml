@@ -21,8 +21,6 @@
         </activity>
 
         <activity android:name=".SimpleServerActivity"/>
-
-        <activity android:name=".SinglePlay"/>
         <activity android:name=".MultiActivity"/>
         <activity android:name=".SimpleClientActivity"/>
 

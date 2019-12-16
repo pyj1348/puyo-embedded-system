@@ -7,20 +7,29 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MultiActivity extends AppCompatActivity {
 
-    ///// JNI
+    ///// ROOM
 
     // Used to load the native library on application startup.
     static {
@@ -39,20 +48,19 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     public native int LCD_write(String game_mode, String address);
-
     public native int segment_write(int score);
-
     public native int LED_write(int combo); // explosion combo
-
     public native int matrix_write(int signal); // explosion and termination
-
     public native int button_open();
-
     public native int button_read();
-
     public native int botton_close();
 
-    ///// JNI
+    String server_IP, client_IP;
+    BufferedReader in;
+    PrintWriter out;
+    boolean start = false;
+
+    ///// ROOM
 
     static final int ROW = 14;
     static final int COL = 8;
@@ -108,6 +116,8 @@ public class MultiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent myIntent = getIntent();
         int number = myIntent.getIntExtra("number", 1);
+        server_IP = myIntent.getStringExtra("server_IP");
+        client_IP = myIntent.getStringExtra("client_IP");
         setLayout(number);
 
         componentArray boards = new componentArray();
@@ -243,30 +253,59 @@ public class MultiActivity extends AppCompatActivity {
             }
         }
 
-        NewRunnable nr = new NewRunnable();
-        Thread t = new Thread(nr);
-        t.start();
+        //while(true){
+        //    if(number == 1 || start){
+                NewRunnable nr = new NewRunnable();
+                Thread t = new Thread(nr);
+                t.start();
+        //        break;
+        //    }
+        //}
 
-        LCD_write(number + " player", "165.194.15.1");
-        segment_write(0010);
+        ///// ROOM
+
+        LCD_write(number+"players number", "ip address");
+        segment_write(0000);
         LED_write(1);
         matrix_write(1);
+        // device thread
 
-        ButtonThread thread = new ButtonThread();
-        thread.start();
+        new ButtonThread().start();
+        new SocketThread().start();
     }
 
-    public void setLayout(int num) {
-        if (num == 1)
-            setContentView(R.layout.single_play);
-        if (num == 2)
-            setContentView(R.layout.players2);
-        if (num == 3)
-            setContentView(R.layout.players3);
-        if (num == 4)
-            setContentView(R.layout.players4);
-    }
+    public class SocketThread extends Thread {
+        Socket socket;
 
+        @Override
+        public void run() {
+            try {
+                socket = new Socket(server_IP, 5000);
+                //socket.connect(new InetSocketAddress(server_IP, 5000));
+                Log.d("server IP", server_IP);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                String s;
+
+                while (true) {
+                    s = in.readLine();
+                    String[] tokens = s.split(":");
+
+                    if ("START".equals(tokens[0])) {
+                        start = true;
+                    } else if("VIEW".equals(tokens[0])){ // board 변경 시 out.flush 했던 직렬화 data
+                        // 직렬화 data 을 그리기 (작성 단계에서 몇 번인지 적혀있음)
+                    } else if("RANK".equals(tokens[0])){ // 사망하면 out.flush 해서 알려주고 종료할 것
+                        // 전달 받은 등수 출력
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    ///// ROOM
 
     private class ButtonThread extends Thread {
         private static final String TAG = "ButtonThread";
@@ -300,6 +339,17 @@ public class MultiActivity extends AppCompatActivity {
             }
         }
         // button_close();
+    }
+
+    public void setLayout(int num) {
+        if (num == 1)
+            setContentView(R.layout.single_play);
+        if (num == 2)
+            setContentView(R.layout.players2);
+        if (num == 3)
+            setContentView(R.layout.players3);
+        if (num == 4)
+            setContentView(R.layout.players4);
     }
 
     private void drawMyBoard() {
