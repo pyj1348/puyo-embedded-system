@@ -282,7 +282,7 @@ public class MultiActivity extends AppCompatActivity {
             try {
                 socket = new Socket(server_IP, 5000);
                 //socket.connect(new InetSocketAddress(server_IP, 5000));
-                Log.d("server IP", server_IP);
+
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
                 String s;

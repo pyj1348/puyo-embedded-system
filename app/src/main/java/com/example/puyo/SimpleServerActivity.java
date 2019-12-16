@@ -51,8 +51,8 @@ public class SimpleServerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 players = 2; players_check = 1; died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_ip",server_IP);
-                intent.putExtra("client_ip",server_IP);
+                intent.putExtra("server_IP",server_IP);
+                intent.putExtra("client_IP",server_IP);
                 intent.putExtra("number",2);
                 startActivity(intent);
             }
@@ -63,8 +63,8 @@ public class SimpleServerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 players = 3; players_check = 1; died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_ip",server_IP);
-                intent.putExtra("client_ip",server_IP);
+                intent.putExtra("server_IP",server_IP);
+                intent.putExtra("client_IP",server_IP);
                 intent.putExtra("number",3);
                 startActivity(intent);
             }
@@ -75,8 +75,8 @@ public class SimpleServerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 players = 4; players_check = 1; died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_ip",server_IP);
-                intent.putExtra("client_ip",server_IP);
+                intent.putExtra("server_IP",server_IP);
+                intent.putExtra("client_IP",server_IP);
                 intent.putExtra("number",4);
                 startActivity(intent);
             }
