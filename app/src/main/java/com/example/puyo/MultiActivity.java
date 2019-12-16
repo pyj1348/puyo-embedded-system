@@ -1,10 +1,15 @@
 package com.example.puyo;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +70,14 @@ public class MultiActivity extends AppCompatActivity {
     private final ImageView[][] sub1_board_Image = new ImageView[ROW][COL];
     private final ImageView[][] sub2_board_Image = new ImageView[ROW][COL];
     private final ImageView[][] sub3_board_Image = new ImageView[ROW][COL];
+    private ImageView[] m_puyoque_Image = new ImageView[4];
+    private ImageView[] m2_puyoque_Image = new ImageView[4];
+    private ImageView[] m3_puyoque_Image = new ImageView[4];
+    private ImageView[] m4_puyoque_Image = new ImageView[4];
+    private TextView m_score_TextView;
+    private TextView m2_score_TextView;
+    private TextView m3_score_TextView;
+    private TextView m4_score_TextView;
 
     static TimerTask tt = new TimerTask() {
         @Override
@@ -82,52 +95,90 @@ public class MultiActivity extends AppCompatActivity {
     private final boolean isConnected = false;
 
     private int[][] idArray;
-
+    private TextView p4_sub2_score_iv;
     /* do not be confused the number */
 
-    private int[][] sub1_idArray;
-    private int[][] sub2_idArray;
-    private int[][] sub3_idArray;
+    private int[][] sub1_idArray = new int[ROW][COL];
+    private int[][] sub2_idArray = new int[ROW][COL];
+    private int[][] sub3_idArray = new int[ROW][COL];
     private ArrayList<Integer> arrays;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.players2);
+        Intent myIntent = getIntent();
+        int number = myIntent.getIntExtra("number", 1);
+        setLayout(number);
 
+        componentArray boards = new componentArray();
+        arrays = new ArrayList<Integer>();
+
+        // number is the number of the player passed from previous activity
+        if (number >= 4) {
+            sub3_idArray = boards.get_4array(number);
+            m4_puyoque_Image = get_4arrayq(number);
+            m4_score_TextView = get_4arrayt(number);
+
+            arrays.add(3);
+        }
+        if (number >= 3) {
+            sub2_idArray = boards.get_3array(number);
+            m3_puyoque_Image = get_3arrayq(number);
+            m3_score_TextView = get_3arrayt(number);
+
+            arrays.add(2);
+        }
+        if (number >= 2) {
+            sub1_idArray = boards.get_2array(number);
+            m2_puyoque_Image = get_2arrayq(number);
+            m2_score_TextView = get_2arrayt(number);
+
+            arrays.add(1);
+        }
+        if (number >= 1) {
+            idArray = boards.get_1array(number);
+            m_puyoque_Image = get_1arrayq(number);
+            m_score_TextView = get_1arrayt(number);
+        }
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
                 m_board_Image[i][j] = (ImageView) findViewById(idArray[i][j]);
                 sub1_board_Image[i][j] = (ImageView) findViewById(sub1_idArray[i][j]);
+                sub2_board_Image[i][j] = (ImageView) findViewById(sub2_idArray[i][j]);
+                sub3_board_Image[i][j] = (ImageView) findViewById(sub3_idArray[i][j]);
             }
-        }
-        componentArray boards = new componentArray();
-        arrays = new ArrayList<Integer>();
-        int number = 0;
-        // number is the number of the player passed from previous activity
-        if (number <= 4) {
-            sub3_idArray = boards.get_4array(number);
-            arrays.add(3);
-        }
-        if (number <= 3) {
-            sub2_idArray = boards.get_3array(number);
-            arrays.add(2);
-        }
-        if (number <= 2) {
-            sub1_idArray = boards.get_2array(number);
-            arrays.add(1);
-        }
-        if (number <= 1) {
-            idArray = boards.get_1array(number);
         }
         board = new Board();
         subBoards = new Board();
         initBoard(m_board_Image);
-
+        tt = new TimerTask() {
+            @Override
+            public void run() {
+                counter++;
+            }
+        };
+        tt2 = new TimerTask() {
+            @Override
+            public void run() {
+                counter2++;
+            }
+        };
+        timer = new Timer();
+        timer2 = new Timer();
         timer.schedule(tt, 0, 100);
-
         timer2.schedule(tt2, 0, 100);
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
 
+            public void handleMessage(Message msg) {
+                if (msg.what != 0) {
+                    m_score_TextView.setText(Integer.toString(msg.what));
+                } else {
+                    drawMyBoard();
+                    //drawSubBoard(packet);
+                }
+            }
+
+        };
         board.gen_puyo();
         class NewRunnable implements Runnable {
             int score = 0;
@@ -139,8 +190,7 @@ public class MultiActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while (true) {
-                    drawMyBoard();
-
+                    handler.sendEmptyMessage(0);
                     int temp = counter2;
                     while (temp + 1 > counter2) {
 
@@ -148,29 +198,34 @@ public class MultiActivity extends AppCompatActivity {
                     if (compare + speed <= counter) {
                         if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                             board.move_down();
-                            drawMyBoard();
                             curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
                             if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                                 board.end_step();
                                 board.update_map();
-                                drawMyBoard();
                                 stagescore = board.clear_board();
                                 if (stagescore != 0) {
+                                    score = score + stagescore;
                                     temp = counter;
+                                    handler.sendEmptyMessage(0);
+                                    handler.sendEmptyMessage(score);  // Draw the score;
                                     while (temp + 5 > counter) {
 
                                     }
                                     int multiplier = 1;
+                                    board.update_map();
+                                    stagescore = multiplier * board.clear_board();
                                     while (stagescore != 0) {
-                                        stagescore = multiplier * board.clear_board();
+                                        score = score + stagescore;
                                         multiplier = multiplier * 4;
                                         board.update_map();
-                                        drawMyBoard();
                                         temp = counter;
+                                        handler.sendEmptyMessage(0);
+                                        handler.sendEmptyMessage(score);  // Draw the score;
                                         while (temp + 5 > counter) {
 
                                         }
-                                        score = score + stagescore;
+                                        board.update_map();
+                                        stagescore = multiplier * board.clear_board();
                                     }
                                 }
                                 if (board.gen_puyo() == 0)
@@ -184,7 +239,6 @@ public class MultiActivity extends AppCompatActivity {
                         speed--;
                         compare = counter;
                     }
-
                 }
             }
         }
@@ -193,7 +247,7 @@ public class MultiActivity extends AppCompatActivity {
         Thread t = new Thread(nr);
         t.start();
 
-        LCD_write(number+" player", "165.194.15.1");
+        LCD_write(number + " player", "165.194.15.1");
         segment_write(0010);
         LED_write(1);
         matrix_write(1);
@@ -201,6 +255,18 @@ public class MultiActivity extends AppCompatActivity {
         ButtonThread thread = new ButtonThread();
         thread.start();
     }
+
+    public void setLayout(int num) {
+        if (num == 1)
+            setContentView(R.layout.single_play);
+        if (num == 2)
+            setContentView(R.layout.players2);
+        if (num == 3)
+            setContentView(R.layout.players3);
+        if (num == 4)
+            setContentView(R.layout.players4);
+    }
+
 
     private class ButtonThread extends Thread {
         private static final String TAG = "ButtonThread";
@@ -237,23 +303,85 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     private void drawMyBoard() {
-
-        for (int i = 1; i < ROW - 1; i++) {
-            for (int j = 1; j < COL - 1; j++) {
-                if (board.getboard()[j][i] == 1) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_blue);
-                } else if (board.getboard()[j][i] == 2) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_green);
-                } else if (board.getboard()[j][i] == 3) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_red);
-                } else if (board.getboard()[j][i] == 4) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_yellow);
-                } else {
-                    m_board_Image[i][j].setImageResource(R.drawable.none);
+        if (board != null) {
+            /*      Draw Board     */
+            for (int i = 1; i < ROW - 1; i++) {
+                for (int j = 1; j < COL - 1; j++) {
+                    if (board.getboard()[j][i] == 1) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_blue);
+                    } else if (board.getboard()[j][i] == 2) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_green);
+                    } else if (board.getboard()[j][i] == 3) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_red);
+                    } else if (board.getboard()[j][i] == 4) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_yellow);
+                    } else {
+                        m_board_Image[i][j].setImageResource(R.drawable.none);
+                    }
                 }
             }
+            drawqueue(board, m_puyoque_Image);
+        }
+    }
+
+    private void drawqueue(Board board, ImageView[] queueimage) {
+        Puyo first = board.getPuyoQueue().getFirstItem();
+        Puyo second = board.getPuyoQueue().getNextitem();
+
+        /*      Draw Puyo Queue     */
+
+        /*      First of First  */
+        if (first.Getfirst() == 1) {
+            queueimage[0].setImageResource(R.drawable.puyo_blue);
+        } else if (first.Getfirst() == 2) {
+            queueimage[0].setImageResource(R.drawable.puyo_green);
+        } else if (first.Getfirst() == 3) {
+            queueimage[0].setImageResource(R.drawable.puyo_red);
+        } else if (first.Getfirst() == 4) {
+            queueimage[0].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            queueimage[0].setImageResource(R.drawable.none);
         }
 
+        /*      Second of First  */
+        if (first.Getsecond() == 1) {
+            queueimage[1].setImageResource(R.drawable.puyo_blue);
+        } else if (first.Getsecond() == 2) {
+            queueimage[1].setImageResource(R.drawable.puyo_green);
+        } else if (first.Getsecond() == 3) {
+            queueimage[1].setImageResource(R.drawable.puyo_red);
+        } else if (first.Getsecond() == 4) {
+            queueimage[1].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            queueimage[1].setImageResource(R.drawable.none);
+        }
+
+
+        /*      First of Second  */
+        if (second.Getfirst() == 1) {
+            queueimage[2].setImageResource(R.drawable.puyo_blue);
+        } else if (second.Getfirst() == 2) {
+            queueimage[2].setImageResource(R.drawable.puyo_green);
+        } else if (second.Getfirst() == 3) {
+            queueimage[2].setImageResource(R.drawable.puyo_red);
+        } else if (second.Getfirst() == 4) {
+            queueimage[2].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            queueimage[2].setImageResource(R.drawable.none);
+        }
+
+        /*      Second of Second  */
+        if (second.Getsecond() == 1) {
+            queueimage[3].setImageResource(R.drawable.puyo_blue);
+        } else if (second.Getsecond() == 2) {
+            queueimage[3].setImageResource(R.drawable.puyo_green);
+        } else if (second.Getsecond() == 3) {
+            queueimage[3].setImageResource(R.drawable.puyo_red);
+        } else if (second.Getsecond() == 4) {
+            queueimage[3].setImageResource(R.drawable.puyo_yellow);
+        } else {
+            queueimage[3].setImageResource(R.drawable.none);
+        }
     }
 
     private void initBoard(ImageView[][] handleimage) {
@@ -268,19 +396,24 @@ public class MultiActivity extends AppCompatActivity {
             handleimage[i][7].setImageResource(R.drawable.wall);
         }
     }
-    
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void drawSubBoard(String packet) {
         ImageView[][] handleimage = new ImageView[0][];
+        ImageView[] qimage = new ImageView[4];
+
         /* sub board 1 */
         for (int a : arrays) {
-            if (a == 1 && packet.startsWith(Integer.toString(a)))
+            if (a == 1 && packet.startsWith(Integer.toString(a))) {
                 handleimage = sub1_board_Image;
-            else if (a == 2 && packet.startsWith(Integer.toString(a)))
+                qimage = m2_puyoque_Image;
+            } else if (a == 2 && packet.startsWith(Integer.toString(a))) {
                 handleimage = sub2_board_Image;
-            else if (a == 3 && packet.startsWith(Integer.toString(a)))
+                qimage = m3_puyoque_Image;
+            } else if (a == 3 && packet.startsWith(Integer.toString(a))) {
                 handleimage = sub3_board_Image;
-            else
+                qimage = m4_puyoque_Image;
+            } else
                 return;
         }
 
@@ -288,18 +421,19 @@ public class MultiActivity extends AppCompatActivity {
         for (int i = 1; i < ROW - 1; i++) {
             for (int j = 1; j < COL - 1; j++) {
                 if (subBoards.getboard()[j][i] == 1) {
-                    sub1_board_Image[i][j].setImageResource(R.drawable.puyo_blue);
+                    handleimage[i][j].setImageResource(R.drawable.puyo_blue);
                 } else if (board.getboard()[j][i] == 2) {
-                    sub1_board_Image[i][j].setImageResource(R.drawable.puyo_green);
+                    handleimage[i][j].setImageResource(R.drawable.puyo_green);
                 } else if (board.getboard()[j][i] == 3) {
-                    sub1_board_Image[i][j].setImageResource(R.drawable.puyo_red);
+                    handleimage[i][j].setImageResource(R.drawable.puyo_red);
                 } else if (board.getboard()[j][i] == 4) {
-                    sub1_board_Image[i][j].setImageResource(R.drawable.puyo_yellow);
+                    handleimage[i][j].setImageResource(R.drawable.puyo_yellow);
                 } else {
-                    sub1_board_Image[i][j].setImageResource(R.drawable.none);
+                    handleimage[i][j].setImageResource(R.drawable.none);
                 }
             }
         }
+        drawqueue(subBoards, qimage);
         /* wall */
         initBoard(handleimage);
     }
@@ -308,50 +442,164 @@ public class MultiActivity extends AppCompatActivity {
     public boolean onKeyDown(final int keyCode, final KeyEvent msg) {
 
         switch (keyCode) {
-        case KeyEvent.KEYCODE_DPAD_LEFT:
-            board.move_left();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_RIGHT:
-            board.move_right();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_UP:
-            board.spin();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_DOWN:
-            board.move_down();
-            drawMyBoard();
-            break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                board.move_left();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                board.move_right();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                board.spin();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                board.move_down();
+                drawMyBoard();
+                break;
         }
 
         return super.onKeyDown(keyCode, msg);
     }
-    
-    /*
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
-        switch (keyCode) {
-        case KeyEvent.KEYCODE_DPAD_LEFT:
-            board.move_left();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_RIGHT:
-            board.move_right();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_UP:
-            board.spin();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_DOWN:
-            board.move_down();
-            drawMyBoard();
-            break;
+    public ImageView[] get_1arrayq(int number) {
+        ImageView[] temp = new ImageView[4];
+        switch (number) {
+            case 1:
+                temp[0] = findViewById(R.id.sp_que_iv_01);
+                temp[1] = findViewById(R.id.sp_que_iv_02);
+                temp[2] = findViewById(R.id.sp_que_iv_03);
+                temp[3] = findViewById(R.id.sp_que_iv_04);
+                return temp;
+            case 2:
+                temp[0] = findViewById(R.id.p2_my_que_iv_01);
+                temp[1] = findViewById(R.id.p2_my_que_iv_02);
+                temp[2] = findViewById(R.id.p2_my_que_iv_03);
+                temp[3] = findViewById(R.id.p2_my_que_iv_04);
+                return temp;
+            case 3:
+                temp[0] = findViewById(R.id.p3_my_que_iv_01);
+                temp[1] = findViewById(R.id.p3_my_que_iv_02);
+                temp[2] = findViewById(R.id.p3_my_que_iv_03);
+                temp[3] = findViewById(R.id.p3_my_que_iv_04);
+                return temp;
+            case 4:
+                temp[0] = findViewById(R.id.p4_my_que_iv_01);
+                temp[1] = findViewById(R.id.p4_my_que_iv_02);
+                temp[2] = findViewById(R.id.p4_my_que_iv_03);
+                temp[3] = findViewById(R.id.p4_my_que_iv_04);
+                return temp;
+            default:
+                return null;
         }
+    }
 
-        return super.onKeyDown(keyCode, msg);
-    } */
+    public ImageView[] get_2arrayq(int number) {
+        ImageView[] temp = new ImageView[4];
+        switch (number) {
+            case 2:
+                temp[0] = findViewById(R.id.p2_sub_que_iv_01);
+                temp[1] = findViewById(R.id.p2_sub_que_iv_02);
+                temp[2] = findViewById(R.id.p2_sub_que_iv_03);
+                temp[3] = findViewById(R.id.p2_sub_que_iv_04);
+                return temp;
+            case 3:
+                temp[0] = findViewById(R.id.p3_sub1_que_iv_01);
+                temp[1] = findViewById(R.id.p3_sub1_que_iv_02);
+                temp[2] = findViewById(R.id.p3_sub1_que_iv_03);
+                temp[3] = findViewById(R.id.p3_sub1_que_iv_04);
+                return temp;
+            case 4:
+                temp[0] = findViewById(R.id.p4_sub1_que_iv_01);
+                temp[1] = findViewById(R.id.p4_sub1_que_iv_02);
+                temp[2] = findViewById(R.id.p4_sub1_que_iv_03);
+                temp[3] = findViewById(R.id.p4_sub1_que_iv_04);
+                return temp;
+            default:
+                return null;
+        }
+    }
+
+    public ImageView[] get_3arrayq(int number) {
+        ImageView[] temp = new ImageView[4];
+        switch (number) {
+            case 3:
+                temp[0] = findViewById(R.id.p3_sub2_que_iv_01);
+                temp[1] = findViewById(R.id.p3_sub2_que_iv_02);
+                temp[2] = findViewById(R.id.p3_sub2_que_iv_03);
+                temp[3] = findViewById(R.id.p3_sub2_que_iv_04);
+                return temp;
+            case 4:
+                temp[0] = findViewById(R.id.p4_sub2_que_iv_01);
+                temp[1] = findViewById(R.id.p4_sub2_que_iv_02);
+                temp[2] = findViewById(R.id.p4_sub2_que_iv_03);
+                temp[3] = findViewById(R.id.p4_sub2_que_iv_04);
+                return temp;
+            default:
+                return null;
+        }
+    }
+
+    public ImageView[] get_4arrayq(int number) {
+        ImageView[] temp = new ImageView[4];
+        switch (number) {
+            case 4:
+                temp[0] = findViewById(R.id.p4_sub3_que_iv_01);
+                temp[1] = findViewById(R.id.p4_sub3_que_iv_02);
+                temp[2] = findViewById(R.id.p4_sub3_que_iv_03);
+                temp[3] = findViewById(R.id.p4_sub3_que_iv_04);
+                return temp;
+            default:
+                return null;
+        }
+    }
+
+    public TextView get_1arrayt(int number) {
+        switch (number) {
+            case 1:
+                return findViewById(R.id.sp_score_iv);
+            case 2:
+                return findViewById(R.id.p2_my_score_iv);
+            case 3:
+                return findViewById(R.id.p3_my_score_iv);
+            case 4:
+                return findViewById(R.id.p4_my_score_iv);
+            default:
+                return null;
+        }
+    }
+
+    public TextView get_2arrayt(int number) {
+        switch (number) {
+            case 2:
+                return findViewById(R.id.p2_sub_score_iv);
+            case 3:
+                return findViewById(R.id.p3_sub1_score_iv);
+            case 4:
+                return findViewById(R.id.p4_sub1_score_iv);
+            default:
+                return null;
+        }
+    }
+
+    public TextView get_3arrayt(int number) {
+        switch (number) {
+            case 3:
+                return findViewById(R.id.p3_sub2_score_iv);
+            case 4:
+                return findViewById(R.id.p4_sub2_score_iv);
+            default:
+                return null;
+        }
+    }
+
+    public TextView get_4arrayt(int number) {
+        switch (number) {
+            case 4:
+                return findViewById(R.id.p4_sub3_score_iv);
+            default:
+                return null;
+        }
+    }
 }

@@ -157,28 +157,31 @@ public class Board {
             } else {
                 int res = this.extra_spin_check(radius);
                 if (radius == 3) {
-                    if (res == 1)
+                    if (res == 1) {
                         position_puyo.x++;
-                    else if (res == 2) {
+                        handling_puyo.spin();
+                    } else {
                         position_puyo.y--;
+                        handling_puyo.spin(3);
                     }
-                    handling_puyo.spin();
 
                 } else if (radius == 4) {
-                    position_puyo.y++;
-                    handling_puyo.spin(6);
-
-                } else if (radius == 5) {
-                    if (res == 1)
+                    if (res == 1) {
                         position_puyo.x--;
-                    else if (res == 2) {
-                        position_puyo.y++;
+                        handling_puyo.spin();
+                    } else if (res == 2) {
+                        position_puyo.x--;
+                        position_puyo.y--;
+                        handling_puyo.spin();
                     }
-                    handling_puyo.spin();
-
-                } else if (radius == 6) {
-                    position_puyo.y--;
-                    handling_puyo.spin(4);
+                } else if (radius == 5) {
+                    if (res == 1) {
+                        position_puyo.x--;
+                        handling_puyo.spin();
+                    } else {
+                        position_puyo.y++;
+                        handling_puyo.spin(1);
+                    }
 
                 }
             }
@@ -199,15 +202,15 @@ public class Board {
                     if (position_puyo.x - 1 >= 1) {
 
                         if (position_puyo.y + i < 0 || mTiles[position_puyo.x - 1][position_puyo.y - 1] != 0
-                                || mTiles[position_puyo.x - 0][position_puyo.y - 1] != 0)
+                                || mTiles[position_puyo.x - 0][position_puyo.y - 1] != 0 || mTiles[position_puyo.x - 1][position_puyo.y] != 0)
                             return false;
                     } else
                         return false;
                 } else if (radius == 4) {
                     if (position_puyo.y + 1 <= 12) {
 
-                        if (mTiles[position_puyo.x + 1][position_puyo.y - 1] != 0
-                                || mTiles[position_puyo.x + 1][position_puyo.y + 0] != 0)
+                        if (mTiles[position_puyo.x - 1][position_puyo.y + 1] != 0
+                                || mTiles[position_puyo.x][position_puyo.y + 1] != 0)
                             return false;
                     } else
                         return false;
@@ -238,20 +241,22 @@ public class Board {
     }
 
     public int extra_spin_check(int radius) {
-        if (radius == 3) {
-            if (position_puyo.x <= 6) {
+        if (radius == 5) {
+            if (position_puyo.x >=2&&position_puyo.x <= 6) {
                 if (mTiles[position_puyo.x - 1][position_puyo.y + 0] == 0)
                     return 1;
-                if (mTiles[position_puyo.x - 1][position_puyo.y + 0] != 0
-                        && mTiles[position_puyo.x - 1][position_puyo.y - 1] == 0)
-                    return 2;
             }
-        } else if (radius == 5) {
-            if (position_puyo.x >= 1) {
+        } else if (radius == 3) {
+            if (position_puyo.x >= 1&&position_puyo.x <= 6) {
                 if (mTiles[position_puyo.x + 1][position_puyo.y + 0] == 0)
                     return 1;
-                if (mTiles[position_puyo.x + 1][position_puyo.y + 1] == 0
-                        && mTiles[position_puyo.x + 1][position_puyo.y] != 0)
+            }
+        } else if (radius == 4) {
+            if (position_puyo.x >=2&&position_puyo.y >= 0 && position_puyo.y < 12) {
+                if (mTiles[position_puyo.x - 1][position_puyo.y + 1] == 0)
+                    return 1;
+            } else if (position_puyo.y >= 0) {
+                if (mTiles[position_puyo.x - 1][position_puyo.y - 1] == 0)
                     return 2;
             }
         }
@@ -269,7 +274,7 @@ public class Board {
     }
 
     public void end_step() {
-        if(handling_puyo !=null) {
+        if (handling_puyo != null) {
 
             for (int i = -1; i < 2; i++) {
                 for (int k = -1; k < 2; k++) {

@@ -1,7 +1,10 @@
 package com.example.puyo;
 
+import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,14 +55,13 @@ public class SinglePlay extends AppCompatActivity {
     static int counter = 0;
     static int counter2 = 0;
     static int speed = 10;
-    static Board board;
+    static Board board = null;
     static Timer timer = new Timer();
     static Timer timer2 = new Timer();
     private ImageView[][] m_board_Image = new ImageView[ROW][COL];
     private ImageView[] m_puyoque_Image1 = new ImageView[2];
     private ImageView[] m_puyoque_Image2 = new ImageView[2];
     private TextView m_score_TextView;
-
 
 
     static TimerTask tt = new TimerTask() {
@@ -76,34 +78,34 @@ public class SinglePlay extends AppCompatActivity {
     };
 
     private int[][] idArray = {
-            { R.id.iv_sp_00, R.id.iv_sp_01, R.id.iv_sp_02, R.id.iv_sp_03, R.id.iv_sp_04, R.id.iv_sp_05, R.id.iv_sp_06,
-                    R.id.iv_sp_07 },
-            { R.id.iv_sp_08, R.id.iv_sp_09, R.id.iv_sp_10, R.id.iv_sp_11, R.id.iv_sp_12, R.id.iv_sp_13, R.id.iv_sp_14,
-                    R.id.iv_sp_15 },
-            { R.id.iv_sp_16, R.id.iv_sp_17, R.id.iv_sp_18, R.id.iv_sp_19, R.id.iv_sp_20, R.id.iv_sp_21, R.id.iv_sp_22,
-                    R.id.iv_sp_23 },
-            { R.id.iv_sp_24, R.id.iv_sp_25, R.id.iv_sp_26, R.id.iv_sp_27, R.id.iv_sp_28, R.id.iv_sp_29, R.id.iv_sp_30,
-                    R.id.iv_sp_31 },
-            { R.id.iv_sp_32, R.id.iv_sp_33, R.id.iv_sp_34, R.id.iv_sp_35, R.id.iv_sp_36, R.id.iv_sp_37, R.id.iv_sp_38,
-                    R.id.iv_sp_39 },
-            { R.id.iv_sp_40, R.id.iv_sp_41, R.id.iv_sp_42, R.id.iv_sp_43, R.id.iv_sp_44, R.id.iv_sp_45, R.id.iv_sp_46,
-                    R.id.iv_sp_47 },
-            { R.id.iv_sp_48, R.id.iv_sp_49, R.id.iv_sp_50, R.id.iv_sp_51, R.id.iv_sp_52, R.id.iv_sp_53, R.id.iv_sp_54,
-                    R.id.iv_sp_55 },
-            { R.id.iv_sp_56, R.id.iv_sp_57, R.id.iv_sp_58, R.id.iv_sp_59, R.id.iv_sp_60, R.id.iv_sp_61, R.id.iv_sp_62,
-                    R.id.iv_sp_63 },
-            { R.id.iv_sp_64, R.id.iv_sp_65, R.id.iv_sp_66, R.id.iv_sp_67, R.id.iv_sp_68, R.id.iv_sp_69, R.id.iv_sp_70,
-                    R.id.iv_sp_71 },
-            { R.id.iv_sp_72, R.id.iv_sp_73, R.id.iv_sp_74, R.id.iv_sp_75, R.id.iv_sp_76, R.id.iv_sp_77, R.id.iv_sp_78,
-                    R.id.iv_sp_79 },
-            { R.id.iv_sp_80, R.id.iv_sp_81, R.id.iv_sp_82, R.id.iv_sp_83, R.id.iv_sp_84, R.id.iv_sp_85, R.id.iv_sp_86,
-                    R.id.iv_sp_87 },
-            { R.id.iv_sp_88, R.id.iv_sp_89, R.id.iv_sp_90, R.id.iv_sp_91, R.id.iv_sp_92, R.id.iv_sp_93, R.id.iv_sp_94,
-                    R.id.iv_sp_95 },
-            { R.id.iv_sp_96, R.id.iv_sp_97, R.id.iv_sp_98, R.id.iv_sp_99, R.id.iv_sp_100, R.id.iv_sp_101,
-                    R.id.iv_sp_102, R.id.iv_sp_103 },
-            { R.id.iv_sp_104, R.id.iv_sp_105, R.id.iv_sp_106, R.id.iv_sp_107, R.id.iv_sp_108, R.id.iv_sp_109,
-                    R.id.iv_sp_110, R.id.iv_sp_111 } };
+            {R.id.iv_sp_00, R.id.iv_sp_01, R.id.iv_sp_02, R.id.iv_sp_03, R.id.iv_sp_04, R.id.iv_sp_05, R.id.iv_sp_06,
+                    R.id.iv_sp_07},
+            {R.id.iv_sp_08, R.id.iv_sp_09, R.id.iv_sp_10, R.id.iv_sp_11, R.id.iv_sp_12, R.id.iv_sp_13, R.id.iv_sp_14,
+                    R.id.iv_sp_15},
+            {R.id.iv_sp_16, R.id.iv_sp_17, R.id.iv_sp_18, R.id.iv_sp_19, R.id.iv_sp_20, R.id.iv_sp_21, R.id.iv_sp_22,
+                    R.id.iv_sp_23},
+            {R.id.iv_sp_24, R.id.iv_sp_25, R.id.iv_sp_26, R.id.iv_sp_27, R.id.iv_sp_28, R.id.iv_sp_29, R.id.iv_sp_30,
+                    R.id.iv_sp_31},
+            {R.id.iv_sp_32, R.id.iv_sp_33, R.id.iv_sp_34, R.id.iv_sp_35, R.id.iv_sp_36, R.id.iv_sp_37, R.id.iv_sp_38,
+                    R.id.iv_sp_39},
+            {R.id.iv_sp_40, R.id.iv_sp_41, R.id.iv_sp_42, R.id.iv_sp_43, R.id.iv_sp_44, R.id.iv_sp_45, R.id.iv_sp_46,
+                    R.id.iv_sp_47},
+            {R.id.iv_sp_48, R.id.iv_sp_49, R.id.iv_sp_50, R.id.iv_sp_51, R.id.iv_sp_52, R.id.iv_sp_53, R.id.iv_sp_54,
+                    R.id.iv_sp_55},
+            {R.id.iv_sp_56, R.id.iv_sp_57, R.id.iv_sp_58, R.id.iv_sp_59, R.id.iv_sp_60, R.id.iv_sp_61, R.id.iv_sp_62,
+                    R.id.iv_sp_63},
+            {R.id.iv_sp_64, R.id.iv_sp_65, R.id.iv_sp_66, R.id.iv_sp_67, R.id.iv_sp_68, R.id.iv_sp_69, R.id.iv_sp_70,
+                    R.id.iv_sp_71},
+            {R.id.iv_sp_72, R.id.iv_sp_73, R.id.iv_sp_74, R.id.iv_sp_75, R.id.iv_sp_76, R.id.iv_sp_77, R.id.iv_sp_78,
+                    R.id.iv_sp_79},
+            {R.id.iv_sp_80, R.id.iv_sp_81, R.id.iv_sp_82, R.id.iv_sp_83, R.id.iv_sp_84, R.id.iv_sp_85, R.id.iv_sp_86,
+                    R.id.iv_sp_87},
+            {R.id.iv_sp_88, R.id.iv_sp_89, R.id.iv_sp_90, R.id.iv_sp_91, R.id.iv_sp_92, R.id.iv_sp_93, R.id.iv_sp_94,
+                    R.id.iv_sp_95},
+            {R.id.iv_sp_96, R.id.iv_sp_97, R.id.iv_sp_98, R.id.iv_sp_99, R.id.iv_sp_100, R.id.iv_sp_101,
+                    R.id.iv_sp_102, R.id.iv_sp_103},
+            {R.id.iv_sp_104, R.id.iv_sp_105, R.id.iv_sp_106, R.id.iv_sp_107, R.id.iv_sp_108, R.id.iv_sp_109,
+                    R.id.iv_sp_110, R.id.iv_sp_111}};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,12 +124,35 @@ public class SinglePlay extends AppCompatActivity {
         m_puyoque_Image2[0] = findViewById(R.id.sp_que_iv_03);
         m_puyoque_Image2[1] = findViewById(R.id.sp_que_iv_04);
 
-        m_score_TextView = findViewById(R.id.sp_score_title_iv);
+        m_score_TextView = findViewById(R.id.sp_score_iv);
 
         initBoard();
+        tt = new TimerTask() {
+            @Override
+            public void run() {
+                counter++;
+            }
+        };
+        tt2 = new TimerTask() {
+            @Override
+            public void run() {
+                counter2++;
+            }
+        };
+        timer = new Timer();
+        timer2 = new Timer();
         timer.schedule(tt, 0, 100);
-
         timer2.schedule(tt2, 0, 100);
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
+
+            public void handleMessage(Message msg) {
+                if (msg.what != 0) {
+                    m_score_TextView.setText(Integer.toString(msg.what));
+                } else
+                    drawMyBoard();
+            }
+
+        };
 
         board = new Board();
         board.gen_puyo();
@@ -141,8 +166,7 @@ public class SinglePlay extends AppCompatActivity {
             @Override
             public void run() {
                 while (true) {
-                    drawMyBoard();
-
+                    handler.sendEmptyMessage(0);
                     int temp = counter2;
                     while (temp + 1 > counter2) {
 
@@ -150,30 +174,34 @@ public class SinglePlay extends AppCompatActivity {
                     if (compare + speed <= counter) {
                         if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                             board.move_down();
-                            drawMyBoard();
                             curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
                             if (curpoint.equals(latterpoint.x, latterpoint.y)) {
                                 board.end_step();
                                 board.update_map();
-                                drawMyBoard();
                                 stagescore = board.clear_board();
                                 if (stagescore != 0) {
+                                    score = score + stagescore;
                                     temp = counter;
+                                    handler.sendEmptyMessage(0);
+                                    handler.sendEmptyMessage(score);  // Draw the score;
                                     while (temp + 5 > counter) {
 
                                     }
                                     int multiplier = 1;
+                                    board.update_map();
+                                    stagescore = multiplier * board.clear_board();
                                     while (stagescore != 0) {
-                                        stagescore = multiplier * board.clear_board();
+                                        score = score + stagescore;
                                         multiplier = multiplier * 4;
                                         board.update_map();
-                                        drawMyBoard();
                                         temp = counter;
+                                        handler.sendEmptyMessage(0);
+                                        handler.sendEmptyMessage(score);  // Draw the score;
                                         while (temp + 5 > counter) {
 
                                         }
-                                        score = score + stagescore;
-                                        //score_TextView.setText(score);  // Draw the score;
+                                        board.update_map();
+                                        stagescore = multiplier * board.clear_board();
                                     }
                                 }
                                 if (board.gen_puyo() == 0)
@@ -187,7 +215,6 @@ public class SinglePlay extends AppCompatActivity {
                         speed--;
                         compare = counter;
                     }
-
                 }
             }
         }
@@ -206,82 +233,84 @@ public class SinglePlay extends AppCompatActivity {
     }
 
     private void drawMyBoard() {
-        Puyo first = board.getPuyoQueue().getFirstItem();
-        Puyo second = board.getPuyoQueue().getNextitem();
+        if (board != null) {
+            Puyo first = board.getPuyoQueue().getFirstItem();
+            Puyo second = board.getPuyoQueue().getNextitem();
 
-        /*      Draw Puyo Queue     */
+            /*      Draw Puyo Queue     */
 
-        /*      First of First  */
-        if (first.Getfirst() == 1) {
-            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_blue);
-        } else if (first.Getfirst() == 2) {
-            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_green);
-        } else if (first.Getfirst() == 3) {
-            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_red);
-        } else if (first.Getfirst() == 4) {
-            m_puyoque_Image1[0].setImageResource(R.drawable.puyo_yellow);
-        } else {
-            m_puyoque_Image1[0].setImageResource(R.drawable.none);
-        }
+            /*      First of First  */
+            if (first.Getfirst() == 1) {
+                m_puyoque_Image1[0].setImageResource(R.drawable.puyo_blue);
+            } else if (first.Getfirst() == 2) {
+                m_puyoque_Image1[0].setImageResource(R.drawable.puyo_green);
+            } else if (first.Getfirst() == 3) {
+                m_puyoque_Image1[0].setImageResource(R.drawable.puyo_red);
+            } else if (first.Getfirst() == 4) {
+                m_puyoque_Image1[0].setImageResource(R.drawable.puyo_yellow);
+            } else {
+                m_puyoque_Image1[0].setImageResource(R.drawable.none);
+            }
 
-        /*      Second of First  */
-        if (first.Getsecond() == 1) {
-            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_blue);
-        } else if (first.Getsecond() == 2) {
-            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_green);
-        } else if (first.Getsecond() == 3) {
-            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_red);
-        } else if (first.Getsecond() == 4) {
-            m_puyoque_Image1[1].setImageResource(R.drawable.puyo_yellow);
-        } else {
-            m_puyoque_Image1[1].setImageResource(R.drawable.none);
-        }
-
-
-        /*      First of Second  */
-        if (second.Getfirst() == 1) {
-            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_blue);
-        } else if (second.Getfirst() == 2) {
-            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_green);
-        } else if (second.Getfirst() == 3) {
-            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_red);
-        } else if (second.Getfirst() == 4) {
-            m_puyoque_Image2[0].setImageResource(R.drawable.puyo_yellow);
-        } else {
-            m_puyoque_Image2[0].setImageResource(R.drawable.none);
-        }
-
-        /*      Second of Second  */
-        if (second.Getsecond() == 1) {
-            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_blue);
-        } else if (second.Getsecond() == 2) {
-            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_green);
-        } else if (second.Getsecond() == 3) {
-            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_red);
-        } else if (second.Getsecond() == 4) {
-            m_puyoque_Image2[1].setImageResource(R.drawable.puyo_yellow);
-        } else {
-            m_puyoque_Image2[1].setImageResource(R.drawable.none);
-        }
+            /*      Second of First  */
+            if (first.Getsecond() == 1) {
+                m_puyoque_Image1[1].setImageResource(R.drawable.puyo_blue);
+            } else if (first.Getsecond() == 2) {
+                m_puyoque_Image1[1].setImageResource(R.drawable.puyo_green);
+            } else if (first.Getsecond() == 3) {
+                m_puyoque_Image1[1].setImageResource(R.drawable.puyo_red);
+            } else if (first.Getsecond() == 4) {
+                m_puyoque_Image1[1].setImageResource(R.drawable.puyo_yellow);
+            } else {
+                m_puyoque_Image1[1].setImageResource(R.drawable.none);
+            }
 
 
-        /*      Draw Board     */
-        for (int i = 1; i < ROW - 1; i++) {
-            for (int j = 1; j < COL - 1; j++) {
-                if (board.getboard()[j][i] == 1) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_blue);
-                } else if (board.getboard()[j][i] == 2) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_green);
-                } else if (board.getboard()[j][i] == 3) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_red);
-                } else if (board.getboard()[j][i] == 4) {
-                    m_board_Image[i][j].setImageResource(R.drawable.puyo_yellow);
-                } else {
-                    m_board_Image[i][j].setImageResource(R.drawable.none);
+            /*      First of Second  */
+            if (second.Getfirst() == 1) {
+                m_puyoque_Image2[0].setImageResource(R.drawable.puyo_blue);
+            } else if (second.Getfirst() == 2) {
+                m_puyoque_Image2[0].setImageResource(R.drawable.puyo_green);
+            } else if (second.Getfirst() == 3) {
+                m_puyoque_Image2[0].setImageResource(R.drawable.puyo_red);
+            } else if (second.Getfirst() == 4) {
+                m_puyoque_Image2[0].setImageResource(R.drawable.puyo_yellow);
+            } else {
+                m_puyoque_Image2[0].setImageResource(R.drawable.none);
+            }
+
+            /*      Second of Second  */
+            if (second.Getsecond() == 1) {
+                m_puyoque_Image2[1].setImageResource(R.drawable.puyo_blue);
+            } else if (second.Getsecond() == 2) {
+                m_puyoque_Image2[1].setImageResource(R.drawable.puyo_green);
+            } else if (second.Getsecond() == 3) {
+                m_puyoque_Image2[1].setImageResource(R.drawable.puyo_red);
+            } else if (second.Getsecond() == 4) {
+                m_puyoque_Image2[1].setImageResource(R.drawable.puyo_yellow);
+            } else {
+                m_puyoque_Image2[1].setImageResource(R.drawable.none);
+            }
+
+
+            /*      Draw Board     */
+            for (int i = 1; i < ROW - 1; i++) {
+                for (int j = 1; j < COL - 1; j++) {
+                    if (board.getboard()[j][i] == 1) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_blue);
+                    } else if (board.getboard()[j][i] == 2) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_green);
+                    } else if (board.getboard()[j][i] == 3) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_red);
+                    } else if (board.getboard()[j][i] == 4) {
+                        m_board_Image[i][j].setImageResource(R.drawable.puyo_yellow);
+                    } else {
+                        m_board_Image[i][j].setImageResource(R.drawable.none);
+                    }
                 }
             }
-        }
 
+        }
     }
 
     private void initBoard() {
@@ -308,7 +337,6 @@ public class SinglePlay extends AppCompatActivity {
             int direction;
             int temp = 0;
             while (true) {
-
                 direction = button_read();
                 if (temp != direction) {
                     if (direction == 1) {
@@ -335,22 +363,22 @@ public class SinglePlay extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
         switch (keyCode) {
-        case KeyEvent.KEYCODE_DPAD_LEFT:
-            board.move_left();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_RIGHT:
-            board.move_right();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_UP:
-            board.spin();
-            drawMyBoard();
-            break;
-        case KeyEvent.KEYCODE_DPAD_DOWN:
-            board.move_down();
-            drawMyBoard();
-            break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                board.move_left();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                board.move_right();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                board.spin();
+                drawMyBoard();
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                board.move_down();
+                drawMyBoard();
+                break;
         }
 
         return super.onKeyDown(keyCode, msg);
