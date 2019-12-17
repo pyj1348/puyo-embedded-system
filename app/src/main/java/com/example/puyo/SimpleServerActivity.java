@@ -49,11 +49,13 @@ public class SimpleServerActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.menu_button1)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                players = 2; players_check = 1; died = 0;
+                players = 2;
+                players_check = 1;
+                died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_IP",server_IP);
-                intent.putExtra("client_IP",server_IP);
-                intent.putExtra("number",2);
+                intent.putExtra("server_IP", server_IP.toString());
+                intent.putExtra("client_IP", server_IP.toString());
+                intent.putExtra("number", 2);
                 startActivity(intent);
             }
         });
@@ -61,11 +63,13 @@ public class SimpleServerActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.menu_button2)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                players = 3; players_check = 1; died = 0;
+                players = 3;
+                players_check = 1;
+                died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_IP",server_IP);
-                intent.putExtra("client_IP",server_IP);
-                intent.putExtra("number",3);
+                intent.putExtra("server_IP", server_IP.toString());
+                intent.putExtra("client_IP", server_IP.toString());
+                intent.putExtra("number", 3);
                 startActivity(intent);
             }
         });
@@ -73,11 +77,13 @@ public class SimpleServerActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.menu_button3)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                players = 4; players_check = 1; died = 0;
+                players = 4;
+                players_check = 1;
+                died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_IP",server_IP);
-                intent.putExtra("client_IP",server_IP);
-                intent.putExtra("number",4);
+                intent.putExtra("server_IP", server_IP.toString());
+                intent.putExtra("client_IP", server_IP.toString());
+                intent.putExtra("number", 4);
                 startActivity(intent);
             }
         });
@@ -95,11 +101,11 @@ public class SimpleServerActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                server_socket = new ServerSocket();
-                Socket = new Socket("192.168.0.1", 80); // onCreate 에 두지 말 것
-                server_IP = Socket.getLocalAddress().getHostAddress();
-                server_socket.bind(new InetSocketAddress(server_IP, server_port));
+                InetAddress addr = InetAddress.getByName("192.168.0.1");
 
+                server_socket = new ServerSocket(5000,50,addr);
+                Log.d("server", (InetAddress.getLocalHost().toString()));
+                server_IP = "192.168.0.1";
                 while (true) {
                     // 연결 요청이 들어올 때까지 block 상태이다.
                     Socket socket = server_socket.accept();
@@ -135,30 +141,30 @@ public class SimpleServerActivity extends AppCompatActivity {
                     s = in.readLine();
                     String[] tokens = s.split(":");
 
-                    if("JOIN".equals(tokens[0])) {
-                        out.write("NUMBER:"+players+"\n");
+                    if ("JOIN".equals(tokens[0])) {
+                        out.write("NUMBER:" + players + "\n");
                         out.flush();
-                    } else if("DATA".equals(tokens[0])) {
+                    } else if ("DATA".equals(tokens[0])) {
                         synchronized (client_write) {
-                            for(PrintWriter start : client_write) {
-                                start.write("VIEW:"+tokens[1]+tokens[2]+"\n");
+                            for (PrintWriter start : client_write) {
+                                start.write("VIEW:" + tokens[1] + tokens[2] + "\n");
                                 start.flush();
                             }
                         }
-                    } else if("DIED".equals(0)){
+                    } else if ("DIED".equals(0)) {
                         died++;
                     }
 
-                    if(!started && players_check == players){
+                    if (!started && players_check == players) {
                         synchronized (client_write) {
-                            for(PrintWriter start : client_write) {
-                                start.write("START:"+"\n");
+                            for (PrintWriter start : client_write) {
+                                start.write("START:" + "\n");
                                 start.flush();
                             }
                         }
                         started = true;
-                    } else if(!terminated && died == players){
-                        for(PrintWriter rank : client_write) {
+                    } else if (!terminated && died == players) {
+                        for (PrintWriter rank : client_write) {
                             //rank.write("RANK:"+"\n");
                             rank.flush();
                         }

@@ -101,13 +101,13 @@ public class SimpleClientActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                socket1 = new Socket("192.168.0.1", 80);
+                socket1 = new Socket("192.168.0.1", 5000);
                 client_IP = socket1.getLocalAddress().getHostAddress();
-
+                Log.e("client",client_IP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            server_IP.remove(client_IP); // 성공했다고 가정한다. // 복원하기
+            //server_IP.remove(client_IP); // 성공했다고 가정한다. // 복원하기
         }
     }
 }

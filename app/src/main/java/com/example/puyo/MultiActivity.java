@@ -48,11 +48,17 @@ public class MultiActivity extends AppCompatActivity {
     }
 
     public native int LCD_write(String game_mode, String address);
+
     public native int segment_write(int score);
+
     public native int LED_write(int combo); // explosion combo
+
     public native int matrix_write(int signal); // explosion and termination
+
     public native int button_open();
+
     public native int button_read();
+
     public native int botton_close();
 
     String server_IP, client_IP;
@@ -87,18 +93,8 @@ public class MultiActivity extends AppCompatActivity {
     private TextView m3_score_TextView;
     private TextView m4_score_TextView;
 
-    static TimerTask tt = new TimerTask() {
-        @Override
-        public void run() {
-            counter++;
-        }
-    };
-    static TimerTask tt2 = new TimerTask() {
-        @Override
-        public void run() {
-            counter2++;
-        }
-    };
+    static TimerTask tt;
+    static TimerTask tt2;
 
     private final boolean isConnected = false;
 
@@ -113,13 +109,16 @@ public class MultiActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         Intent myIntent = getIntent();
         int number = myIntent.getIntExtra("number", 1);
         server_IP = myIntent.getStringExtra("server_IP");
         client_IP = myIntent.getStringExtra("client_IP");
         setLayout(number);
-
+        counter = 0;
+        counter2 = 0;
+        speed = 10;
         componentArray boards = new componentArray();
         arrays = new ArrayList<Integer>();
 
@@ -150,6 +149,9 @@ public class MultiActivity extends AppCompatActivity {
             m_puyoque_Image = get_1arrayq(number);
             m_score_TextView = get_1arrayt(number);
         }
+        if (number == 1) {
+            start = true;
+        }
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
                 m_board_Image[i][j] = (ImageView) findViewById(idArray[i][j]);
@@ -177,14 +179,16 @@ public class MultiActivity extends AppCompatActivity {
         timer2 = new Timer();
         timer.schedule(tt, 0, 100);
         timer2.schedule(tt2, 0, 100);
+
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
 
             public void handleMessage(Message msg) {
                 if (msg.what != 0) {
                     m_score_TextView.setText(Integer.toString(msg.what));
+                } else if (msg.what == -1) {
+                    drawSubBoard(msg.obj.toString());
                 } else {
                     drawMyBoard();
-                    //drawSubBoard(packet);
                 }
             }
 
@@ -197,83 +201,109 @@ public class MultiActivity extends AppCompatActivity {
             Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
             Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
             String s;
+            Socket socket;
+
             @Override
             public void run() {
-                Socket socket;
                 try {
                     socket = new Socket(server_IP, 5000);
                     //socket.connect(new InetSocketAddress(server_IP, 5000));
-
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    out = new PrintWriter(socket.getOutputStream(), true);
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 while (true) {
-                    try {
-                        s = in.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    String[] tokens = s.split(":");
+                    Message message = handler.obtainMessage();
+                    if(start!=true) {
+                        if (socket != null) {
+                            try {
+                                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                out = new PrintWriter(socket.getOutputStream(), true);
+                                s = in.readLine();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            String[] tokens = s.split(":");
 
-                    if ("START".equals(tokens[0])) {
-                        start = true;
-                    } else if("VIEW".equals(tokens[0])){ // board 변경 시 out.flush 했던 직렬화 data
-                        // 직렬화 data 을 그리기 (작성 단계에서 몇 번인지 적혀있음)
-                    } else if("RANK".equals(tokens[0])){ // 사망하면 out.flush 해서 알려주고 종료할 것
-                        // 전달 받은 등수 출력
+                            if ("START".equals(tokens[0])) {
+                                start = true;
+                            } else if ("VIEW".equals(tokens[0])) { // board 변경 시 out.flush 했던 직렬화 data
+                                // 직렬화 data 을 그리기 (작성 단계에서 몇 번인지 적혀있음)
+                                message = handler.obtainMessage();
+                                message.what = -1;
+                                message.obj = tokens[1];
+                                handler.sendMessage(message);
+                            } else if ("RANK".equals(tokens[0])) { // 사망하면 out.flush 해서 알려주고 종료할 것
+                                // 전달 받은 등수 출력
+                            }
+                        } else {
+                            try {
+                                socket = new Socket(server_IP, 5000);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
+                    if (start == true) {
+                        message = handler.obtainMessage();
+                        message.what = 0;
+                        handler.sendMessage(message);
+                        int temp = counter2;
+                        while (temp + 1 > counter2) {
 
-                    handler.sendEmptyMessage(0);
-                    int temp = counter2;
-                    while (temp + 1 > counter2) {
-
-                    }
-                    if (compare + speed <= counter) {
-                        if (curpoint.equals(latterpoint.x, latterpoint.y)) {
-                            board.move_down();
-                            curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+                        }
+                        if (compare + speed <= counter) {
                             if (curpoint.equals(latterpoint.x, latterpoint.y)) {
-                                board.end_step();
-                                board.update_map();
-                                stagescore = board.clear_board();
-                                if (stagescore != 0) {
-                                    score = score + stagescore;
-                                    temp = counter;
-                                    handler.sendEmptyMessage(0);
-                                    handler.sendEmptyMessage(score);  // Draw the score;
-                                    while (temp + 5 > counter) {
-
-                                    }
-                                    int multiplier = 1;
+                                board.move_down();
+                                curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
+                                if (curpoint.equals(latterpoint.x, latterpoint.y)) {
+                                    board.end_step();
                                     board.update_map();
-                                    stagescore = multiplier * board.clear_board();
-                                    while (stagescore != 0) {
+                                    stagescore = board.clear_board();
+                                    if (stagescore != 0) {
                                         score = score + stagescore;
-                                        multiplier = multiplier * 4;
-                                        board.update_map();
                                         temp = counter;
-                                        handler.sendEmptyMessage(0);
-                                        handler.sendEmptyMessage(score);  // Draw the score;
+                                        message = handler.obtainMessage();
+                                        message.what = 0;
+                                        handler.sendMessage(message);
+                                        message = handler.obtainMessage();
+                                        message.what = score;
+                                        handler.sendMessage(message);
                                         while (temp + 5 > counter) {
 
                                         }
+                                        int multiplier = 1;
                                         board.update_map();
                                         stagescore = multiplier * board.clear_board();
+                                        while (stagescore != 0) {
+                                            score = score + stagescore;
+                                            multiplier = multiplier * 4;
+                                            board.update_map();
+                                            temp = counter;
+                                            message = handler.obtainMessage();
+                                            message.what = 0;
+                                            handler.sendMessage(message);
+                                            message = handler.obtainMessage();
+                                            message.what = score;
+                                            handler.sendMessage(message);
+                                            while (temp + 5 > counter) {
+
+                                            }
+                                            board.update_map();
+                                            stagescore = multiplier * board.clear_board();
+                                        }
                                     }
+                                    if (board.gen_puyo() == 0)
+                                        break;
                                 }
-                                if (board.gen_puyo() == 0)
-                                    break;
                             }
+                            latterpoint = new Point(curpoint.x, curpoint.y);
+                            compare = counter;
                         }
-                        latterpoint = new Point(curpoint.x, curpoint.y);
-                        compare = counter;
-                    }
-                    if ((int) (counter / 30) > 10 - speed) {
-                        speed--;
-                        compare = counter;
+                        if ((int) (counter / 30) > 10 - speed) {
+                            speed--;
+                            compare = counter;
+                        }
                     }
                 }
             }
@@ -281,16 +311,16 @@ public class MultiActivity extends AppCompatActivity {
 
         //while(true){
         //    if(number == 1 || start){
-                NewRunnable nr = new NewRunnable();
-                Thread t = new Thread(nr);
-                t.start();
+        NewRunnable nr = new NewRunnable();
+        Thread t = new Thread(nr);
+        t.start();
         //        break;
         //    }
         //}
 
         ///// ROOM
 
-        LCD_write(number+"players number", "ip address");
+        LCD_write(number + "players number", "ip address");
         segment_write(0000);
         LED_write(1);
         matrix_write(1);
@@ -375,9 +405,9 @@ public class MultiActivity extends AppCompatActivity {
             queueimage[0].setImageResource(R.drawable.puyo_blue);
         } else if (first.Getfirst() == 2) {
             queueimage[0].setImageResource(R.drawable.puyo_green);
-        /*      Draw Puyo Queue     */
+            /*      Draw Puyo Queue     */
 
-        /*      First of First  */
+            /*      First of First  */
         } else if (first.Getfirst() == 3) {
             queueimage[0].setImageResource(R.drawable.puyo_red);
         } else if (first.Getfirst() == 4) {
