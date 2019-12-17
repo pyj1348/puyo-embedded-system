@@ -51,7 +51,7 @@ public class SimpleClientActivity extends AppCompatActivity {
                 Intent intent = new Intent(SimpleClientActivity.this, MultiActivity.class);
                 intent.putExtra("server_IP", "192.168.0.2");
                 intent.putExtra("client_IP", client_IP);
-                intent.putExtra("number", number);
+                intent.putExtra("number", 3);
                 startActivity(intent);
             }
         });
@@ -62,7 +62,7 @@ public class SimpleClientActivity extends AppCompatActivity {
                 Intent intent = new Intent(SimpleClientActivity.this, MultiActivity.class);
                 intent.putExtra("server_IP", "192.168.0.3");
                 intent.putExtra("client_IP", client_IP);
-                intent.putExtra("number", number);
+                intent.putExtra("number", 3);
                 startActivity(intent);
             }
         });
@@ -73,7 +73,7 @@ public class SimpleClientActivity extends AppCompatActivity {
                 Intent intent = new Intent(SimpleClientActivity.this, MultiActivity.class);
                 intent.putExtra("server_IP", "192.168.0.4");
                 intent.putExtra("client_IP", client_IP);
-                intent.putExtra("number", number);
+                intent.putExtra("number", 3);
                 startActivity(intent);
             }
         });
@@ -84,7 +84,7 @@ public class SimpleClientActivity extends AppCompatActivity {
                 Intent intent = new Intent(SimpleClientActivity.this, MultiActivity.class);
                 intent.putExtra("server_IP", "192.168.0.5");
                 intent.putExtra("client_IP", client_IP);
-                intent.putExtra("number", number);
+                intent.putExtra("number", 3);
                 startActivity(intent);
             }
         });
@@ -103,6 +103,7 @@ public class SimpleClientActivity extends AppCompatActivity {
             try {
                 socket1 = new Socket("192.168.0.1", 80);
                 client_IP = socket1.getLocalAddress().getHostAddress();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

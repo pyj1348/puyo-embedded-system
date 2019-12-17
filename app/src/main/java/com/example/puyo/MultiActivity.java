@@ -196,10 +196,36 @@ public class MultiActivity extends AppCompatActivity {
             int compare = counter;
             Point curpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
             Point latterpoint = new Point(board.get_puyoposition().x, board.get_puyoposition().y);
-
+            String s;
             @Override
             public void run() {
+                Socket socket;
+                try {
+                    socket = new Socket(server_IP, 5000);
+                    //socket.connect(new InetSocketAddress(server_IP, 5000));
+
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    out = new PrintWriter(socket.getOutputStream(), true);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 while (true) {
+                    try {
+                        s = in.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String[] tokens = s.split(":");
+
+                    if ("START".equals(tokens[0])) {
+                        start = true;
+                    } else if("VIEW".equals(tokens[0])){ // board 변경 시 out.flush 했던 직렬화 data
+                        // 직렬화 data 을 그리기 (작성 단계에서 몇 번인지 적혀있음)
+                    } else if("RANK".equals(tokens[0])){ // 사망하면 out.flush 해서 알려주고 종료할 것
+                        // 전달 받은 등수 출력
+                    }
+
                     handler.sendEmptyMessage(0);
                     int temp = counter2;
                     while (temp + 1 > counter2) {
@@ -271,39 +297,6 @@ public class MultiActivity extends AppCompatActivity {
         // device thread
 
         new ButtonThread().start();
-        new SocketThread().start();
-    }
-
-    public class SocketThread extends Thread {
-        Socket socket;
-
-        @Override
-        public void run() {
-            try {
-                socket = new Socket(server_IP, 5000);
-                //socket.connect(new InetSocketAddress(server_IP, 5000));
-
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
-                String s;
-
-                while (true) {
-                    s = in.readLine();
-                    String[] tokens = s.split(":");
-
-                    if ("START".equals(tokens[0])) {
-                        start = true;
-                    } else if("VIEW".equals(tokens[0])){ // board 변경 시 out.flush 했던 직렬화 data
-                        // 직렬화 data 을 그리기 (작성 단계에서 몇 번인지 적혀있음)
-                    } else if("RANK".equals(tokens[0])){ // 사망하면 out.flush 해서 알려주고 종료할 것
-                        // 전달 받은 등수 출력
-                    }
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
     ///// ROOM
 
@@ -378,13 +371,13 @@ public class MultiActivity extends AppCompatActivity {
         Puyo first = board.getPuyoQueue().getFirstItem();
         Puyo second = board.getPuyoQueue().getNextitem();
 
-        /*      Draw Puyo Queue     */
-
-        /*      First of First  */
         if (first.Getfirst() == 1) {
             queueimage[0].setImageResource(R.drawable.puyo_blue);
         } else if (first.Getfirst() == 2) {
             queueimage[0].setImageResource(R.drawable.puyo_green);
+        /*      Draw Puyo Queue     */
+
+        /*      First of First  */
         } else if (first.Getfirst() == 3) {
             queueimage[0].setImageResource(R.drawable.puyo_red);
         } else if (first.Getfirst() == 4) {
