@@ -53,8 +53,8 @@ public class SimpleServerActivity extends AppCompatActivity {
                 players_check = 1;
                 died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_IP", server_IP.toString());
-                intent.putExtra("client_IP", server_IP.toString());
+                intent.putExtra("server_IP", server_IP);
+                intent.putExtra("client_IP", server_IP);
                 intent.putExtra("number", 2);
                 startActivity(intent);
             }
@@ -67,8 +67,8 @@ public class SimpleServerActivity extends AppCompatActivity {
                 players_check = 1;
                 died = 0;
                 Intent intent = new Intent(SimpleServerActivity.this, MultiActivity.class);
-                intent.putExtra("server_IP", server_IP.toString());
-                intent.putExtra("client_IP", server_IP.toString());
+                intent.putExtra("server_IP", server_IP);
+                intent.putExtra("client_IP", server_IP);
                 intent.putExtra("number", 3);
                 startActivity(intent);
             }
@@ -104,6 +104,8 @@ public class SimpleServerActivity extends AppCompatActivity {
                 InetAddress addr = InetAddress.getByName("192.168.0.1");
 
                 server_socket = new ServerSocket(5000,50,addr);
+                Socket = new Socket("192.168.0.1", 80); // onCreate 에 두지 말 것
+
                 Log.d("server", (InetAddress.getLocalHost().toString()));
                 server_IP = "192.168.0.1";
                 while (true) {

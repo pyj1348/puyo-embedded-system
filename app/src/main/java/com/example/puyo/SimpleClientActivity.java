@@ -101,7 +101,7 @@ public class SimpleClientActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                socket1 = new Socket("192.168.0.1", 5000);
+                socket1 = new Socket("192.168.0.1", 80);
                 client_IP = socket1.getLocalAddress().getHostAddress();
                 Log.e("client",client_IP);
             } catch (IOException e) {
